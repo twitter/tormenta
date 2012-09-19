@@ -6,6 +6,8 @@ organization := "com.twitter"
 
 scalaVersion := "2.9.2"
 
+scalacOptions += "-Yresolve-term-conflict:package"
+
 // Use ScalaCheck
 resolvers ++= Seq(
   "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
