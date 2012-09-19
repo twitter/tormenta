@@ -10,8 +10,8 @@ scalacOptions += "-Yresolve-term-conflict:package"
 
 // Use ScalaCheck
 resolvers ++= Seq(
-  "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
-  "releases"  at "http://oss.sonatype.org/content/repositories/releases",
+  "sonatype-snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
+  "sonatype-releases"  at "http://oss.sonatype.org/content/repositories/releases",
   "Clojars Repository" at "http://clojars.org/repo",
   "Conjars Repository" at "http://conjars.org/repo",
   // Probably need this when we go public
@@ -38,11 +38,11 @@ parallelExecution in Test := true
 publishMavenStyle := true
 
 publishTo <<= version { (v: String) =>
-  val nexus = "http://artifactory.local.twitter.com/"
+  val url = "http://artifactory.local.twitter.com/"
   if (v.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "libs-snapshots-local")
+    Some("snapshots" at (url + "libs-snapshots-local"))
   else
-    Some("releases"  at nexus + "libs-releases-local")
+    Some("releases" at (url + "libs-releases-local"))
 }
 
 publishArtifact in Test := false
