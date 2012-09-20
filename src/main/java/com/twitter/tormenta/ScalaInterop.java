@@ -1,4 +1,4 @@
-package com.twitter.storm;
+package com.twitter.tormenta;
 
 /**
  *  @author Oscar Boykin
