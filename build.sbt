@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
   "storm" % "storm-kafka" % "0.7.3-scala292-dynamic-SNAPSHOT",
   "storm" % "storm-kestrel" % "0.7.2-snap3",
   "com.twitter" % "util-core" % "5.3.7",
-  "com.twitter" %% "chill" % "0.0.1"
+  "com.twitter" %% "chill" % "0.0.2"
 )
 
 parallelExecution in Test := true
