@@ -1,6 +1,6 @@
 name := "tormenta"
 
-version := "0.0.1-SNAPSHOT"
+version := "0.0.2-SNAPSHOT"
 
 organization := "com.twitter"
 
@@ -28,7 +28,8 @@ libraryDependencies ++= Seq(
   "storm" % "storm" % "0.8.0",
   "storm" % "storm-kafka" % "0.7.3-scala292-dynamic-SNAPSHOT",
   "storm" % "storm-kestrel" % "0.7.2-snap3",
-  "com.twitter" % "util-core" % "5.3.7"
+  "com.twitter" % "util-core" % "5.3.7",
+  "com.twitter" %% "chill" % "0.0.1"
 )
 
 parallelExecution in Test := true
