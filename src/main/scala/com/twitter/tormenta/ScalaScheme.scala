@@ -10,7 +10,7 @@ import com.twitter.util.Decoder
  *  @author Sam Ritchie
  */
 
-trait ScalaScheme[T] extends Scheme {
+trait ScalaScheme[T] extends Scheme with java.io.Serializable {
 
   def decode(bytes: Array[Byte]): Option[T]
 
