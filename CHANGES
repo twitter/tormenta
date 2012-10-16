@@ -1,0 +1,9 @@
+# tormenta #
+
+### Version 0.0.2 ###
+
+* Added ScalaScheme and ScalaSpout with chill dependency for serialization.
+
+### Version 0.0.1 ###
+
+* Added ScalaInterop java class for DRPC.

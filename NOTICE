@@ -1,0 +1,8 @@
+Tormenta is a set of Scala extensions for Storm.
+Copyright 2012 Twitter, Inc.
+
+Third Party Dependencies:
+
+Storm
+Eclipse Public License 1.0
+https://github.com/nathanmarz/storm
