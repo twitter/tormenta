@@ -14,13 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.twitter.tormenta
+package com.twitter.tormenta.scheme
 
 import backtype.storm.tuple.{ Fields, Values }
 import backtype.storm.spout.Scheme
-
-import com.twitter.chill.MeatLocker
-import com.twitter.util.Decoder
 
 /**
  *  @author Oscar Boykin
@@ -57,13 +54,4 @@ trait ScalaScheme[T] extends Scheme with java.io.Serializable {
   }
 
   override lazy val getOutputFields = new Fields("summingEvent")
-}
-
-object DecoderScheme {
-  implicit def apply[T](decoder: Decoder[T,Array[Byte]]) = new DecoderScheme(decoder)
-}
-
-class DecoderScheme[T](@transient decoder: Decoder[T,Array[Byte]]) extends ScalaScheme[T] {
-  val decoderBox = new MeatLocker(decoder)
-  override def decode(bytes: Array[Byte]) = Some(decoderBox.get.decode(bytes))
 }

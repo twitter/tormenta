@@ -14,30 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.twitter.tormenta
+package com.twitter.tormenta.spout
 
-import backtype.storm.spout.KestrelThriftSpout
-import backtype.storm.topology.IRichSpout
-
-import scala.collection.JavaConverters._
+import com.twitter.tormenta.scheme.ScalaScheme
 import storm.kafka.{ KafkaSpout => StormKafkaSpout, KafkaConfig, SpoutConfig }
 
 /**
  *  @author Oscar Boykin
  *  @author Sam Ritchie
  */
-
-trait ScalaSpout[T] extends java.io.Serializable {
-  def getSpout: IRichSpout = getSpout(identity _)
-  def getSpout[R](transformer: (ScalaScheme[T]) => ScalaScheme[R]): IRichSpout
-  def parallelism: Int
-}
-
-class KestrelSpout[T](scheme: ScalaScheme[T], hosts : List[String], name : String, val parallelism : Int = 1, port : Int = 2229)
-extends ScalaSpout[T] {
-  override def getSpout[R](transformer: (ScalaScheme[T]) => ScalaScheme[R]) =
-    new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme))
-}
 
 // TODO: Make zookeeper information configurable
 class KafkaSpout[T](scheme: ScalaScheme[T], zkHost: String, topic: String, appID: String, val parallelism: Int = 1)
