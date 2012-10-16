@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "org.scala-tools.testing" % "specs_2.9.0-1" % "1.6.8" % "test",
   "storm" % "storm" % "0.8.0",
-  "storm" % "storm-kafka" % "0.7.3-scala292-dynamic-SNAPSHOT",
+  "storm" % "storm-kafka" % "0.8.0-wip4",
   "storm" % "storm-kestrel" % "0.7.2-snap3",
   "com.twitter" % "util-core" % "5.3.7",
   "com.twitter" %% "chill" % "0.0.2"
@@ -35,11 +35,11 @@ parallelExecution in Test := true
 publishMavenStyle := true
 
 publishTo <<= version { (v: String) =>
-  val url = "http://artifactory.local.twitter.com/"
+  val nexus = "https://oss.sonatype.org/"
   if (v.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at (url + "libs-snapshots-local"))
+    Some("snapshots" at nexus + "content/repositories/snapshots")
   else
-    Some("releases" at (url + "libs-releases-local"))
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
 publishArtifact in Test := false
