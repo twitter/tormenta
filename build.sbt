@@ -1,6 +1,6 @@
 name := "tormenta"
 
-version := "0.0.2"
+version := "0.1.0"
 
 organization := "com.twitter"
 
@@ -14,19 +14,15 @@ resolvers ++= Seq(
   "sonatype-releases"  at "http://oss.sonatype.org/content/repositories/releases",
   "Clojars Repository" at "http://clojars.org/repo",
   "Conjars Repository" at "http://conjars.org/repo",
-  // Probably need this when we go public
-  //"Twitter Maven" at "http://maven.twttr.com",
-  "Twitter SVN Maven" at "https://svn.twitter.biz/maven-public",
-  //Can't be here when we publish it publicly
-  "Twitter Artifactory" at "http://artifactory.local.twitter.com/libs-releases-local",
-  "Twitter Artifactory Snapshots" at "http://artifactory.local.twitter.com/libs-snapshots-local"
+  "Twitter Maven" at "http://maven.twttr.com",
+  "Twitter SVN Maven" at "https://svn.twitter.biz/maven-public"
 )
 
 libraryDependencies ++= Seq(
   "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "org.scala-tools.testing" % "specs_2.9.0-1" % "1.6.8" % "test",
   "storm" % "storm" % "0.8.0",
-  "storm" % "storm-kafka" % "0.7.3-scala292-dynamic-SNAPSHOT",
+  "storm" % "storm-kafka" % "0.8.0-wip4",
   "storm" % "storm-kestrel" % "0.7.2-snap3",
   "com.twitter" % "util-core" % "5.3.7",
   "com.twitter" %% "chill" % "0.0.2"
@@ -39,11 +35,11 @@ parallelExecution in Test := true
 publishMavenStyle := true
 
 publishTo <<= version { (v: String) =>
-  val url = "http://artifactory.local.twitter.com/"
+  val nexus = "https://oss.sonatype.org/"
   if (v.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at (url + "libs-snapshots-local"))
+    Some("snapshots" at nexus + "content/repositories/snapshots")
   else
-    Some("releases" at (url + "libs-releases-local"))
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 
 publishArtifact in Test := false

@@ -14,23 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.twitter.tormenta;
+package com.twitter.tormenta.scheme
+
+import backtype.storm.tuple.{ Fields, Values }
+
+import com.twitter.chill.MeatLocker
+import com.twitter.util.Decoder
 
 /**
  *  @author Oscar Boykin
  *  @author Sam Ritchie
- *
- * This class is just to get around raw-type issues, etc from Scala
- * Raw types, or some non-fully type parameterized generics cause problems in scala.
- * This class helps deal with this.
  */
-public class ScalaInterop {
-  protected ScalaInterop() { }
-  public static backtype.storm.drpc.DRPCSpout makeDRPC(String function) {
-    return new backtype.storm.drpc.DRPCSpout(function);
-  }
-  public static storm.trident.Stream newDRPCStream(storm.trident.TridentTopology top,
-    String streamName) {
-    return top.newDRPCStream(streamName);
-  }
+
+object DecoderScheme {
+  implicit def apply[T](decoder: Decoder[T,Array[Byte]]) = new DecoderScheme(decoder)
+}
+
+class DecoderScheme[T](@transient decoder: Decoder[T,Array[Byte]]) extends ScalaScheme[T] {
+  val decoderBox = new MeatLocker(decoder)
+  override def decode(bytes: Array[Byte]) = Some(decoderBox.get.decode(bytes))
 }

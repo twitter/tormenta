@@ -14,23 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.twitter.tormenta;
+package com.twitter.tormenta.spout
+
+import backtype.storm.spout.KestrelThriftSpout
+import com.twitter.tormenta.scheme.ScalaScheme
+import scala.collection.JavaConverters._
 
 /**
  *  @author Oscar Boykin
  *  @author Sam Ritchie
- *
- * This class is just to get around raw-type issues, etc from Scala
- * Raw types, or some non-fully type parameterized generics cause problems in scala.
- * This class helps deal with this.
  */
-public class ScalaInterop {
-  protected ScalaInterop() { }
-  public static backtype.storm.drpc.DRPCSpout makeDRPC(String function) {
-    return new backtype.storm.drpc.DRPCSpout(function);
-  }
-  public static storm.trident.Stream newDRPCStream(storm.trident.TridentTopology top,
-    String streamName) {
-    return top.newDRPCStream(streamName);
-  }
+
+class KestrelSpout[T](scheme: ScalaScheme[T], hosts: List[String], name: String, val parallelism: Int = 1, port: Int = 2229)
+extends ScalaSpout[T] {
+  override def getSpout[R](transformer: (ScalaScheme[T]) => ScalaScheme[R]) =
+    new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme))
 }
