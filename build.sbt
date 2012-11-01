@@ -21,11 +21,11 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "org.scala-tools.testing" % "specs_2.9.0-1" % "1.6.8" % "test",
-  "storm" % "storm" % "0.8.0",
+  "storm" % "storm" % "0.8.2-wip11",
   "storm" % "storm-kafka" % "0.8.0-wip4",
   "storm" % "storm-kestrel" % "0.7.2-snap3",
   "com.twitter" % "util-core" % "5.3.7",
-  "com.twitter" %% "chill" % "0.0.2"
+  "com.twitter" %% "chill" % "0.0.3"
 )
 
 parallelExecution in Test := true
