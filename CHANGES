@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.0.3 ###
+
+* Added base ScalaKryoFactory implementation.
+
 ### Version 0.0.2 ###
 
 * Added ScalaScheme and ScalaSpout with chill dependency for serialization.
