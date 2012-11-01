@@ -17,8 +17,7 @@ limitations under the License.
 package com.twitter.tormenta.serialization
 
 import backtype.storm.serialization.IKryoFactory
-import com.esotericsoftware.kryo.Kryo
-import com.esotericsoftware.kryo.Serializer
+import com.esotericsoftware.kryo.{ Kryo, Serializer }
 import com.twitter.chill.{ KryoSerializer, ObjectSerializer }
 import java.util.{ Map => JMap }
 import org.objenesis.strategy.StdInstantiatorStrategy
