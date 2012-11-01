@@ -19,7 +19,7 @@ package com.twitter.tormenta.serialization
 import backtype.storm.serialization.IKryoFactory
 import com.esotericsoftware.kryo.{ Kryo, Serializer }
 import com.twitter.chill.{ KryoSerializer, ObjectSerializer }
-import java.util.{ Map => JMap }
+import java.util.{ HashMap, Map => JMap }
 import org.objenesis.strategy.StdInstantiatorStrategy
 
 /**
@@ -28,7 +28,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy
  */
 
 class ScalaKryoFactory extends IKryoFactory {
-  override def getKryo(conf: JMap[_,_]): Kryo = {
+  def getKryo() = {
     val k = new Kryo {
       lazy val objSer = new ObjectSerializer[AnyRef]
       override def newDefaultSerializer(cls: Class[_]): Serializer[_] = {
@@ -41,6 +41,23 @@ class ScalaKryoFactory extends IKryoFactory {
     k.setInstantiatorStrategy(new StdInstantiatorStrategy());
     k
   }
+
+  override def getKryo(conf: JMap[_,_]): Kryo = getKryo
+
+  // Instantiate and preRegister a single Kryo instance to use in
+  // registeredByDefault.
+  val baseKryo = {
+    val k = getKryo
+    preRegister(k, new HashMap[Any,Any]())
+    k
+  }
+
+  // ScalaKryoFactory registers a lot of non-primitives by default;
+  // this function returns true if the supplied class fits that
+  // description, false otherwise.
+  def registeredByDefault(klass: Class[_]) =
+    baseKryo.getClassResolver.getRegistration(klass) != null
+
   override def preRegister(k: Kryo, conf: JMap[_,_]) {
     // Register all the chill serializers:
     KryoSerializer.registerAll(k)
