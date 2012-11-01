@@ -46,7 +46,7 @@ class ScalaKryoFactory extends IKryoFactory {
 
   // Instantiate and preRegister a single Kryo instance to use in
   // registeredByDefault.
-  val baseKryo = {
+  lazy val baseKryo = {
     val k = getKryo
     preRegister(k, new HashMap[Any,Any]())
     k
