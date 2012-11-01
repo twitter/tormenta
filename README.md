@@ -26,7 +26,7 @@ Now you're cooking with gas.
 
 ## Maven
 
-Current version is 0.0.3. groupid="com.twitter" artifact="tormenta_2.9.2".
+Current version is 0.1.1. groupid="com.twitter" artifact="tormenta_2.9.2".
 
 ## Authors
 
