@@ -1,6 +1,6 @@
 name := "tormenta"
 
-version := "0.0.3-SNAPSHOT"
+version := "0.0.3"
 
 organization := "com.twitter"
 
