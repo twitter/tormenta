@@ -19,18 +19,18 @@ package com.twitter.tormenta.scheme
 import backtype.storm.tuple.{ Fields, Values }
 
 import com.twitter.chill.MeatLocker
-import com.twitter.util.Decoder
+import com.twitter.util.Bijection
 
 /**
  *  @author Oscar Boykin
  *  @author Sam Ritchie
  */
 
-object DecoderScheme {
-  implicit def apply[T](decoder: Decoder[T,Array[Byte]]) = new DecoderScheme(decoder)
+object BijectionScheme {
+  implicit def apply[T](bijection: Bijection[T,Array[Byte]]) = new BijectionScheme(bijection)
 }
 
-class DecoderScheme[T](@transient decoder: Decoder[T,Array[Byte]]) extends ScalaScheme[T] {
-  val decoderBox = new MeatLocker(decoder)
-  override def decode(bytes: Array[Byte]) = Some(decoderBox.get.decode(bytes))
+class BijectionScheme[T](@transient bijection: Bijection[T,Array[Byte]]) extends ScalaScheme[T] {
+  val bijectionBox = MeatLocker(bijection)
+  override def decode(bytes: Array[Byte]) = Some(bijectionBox.get.invert(bytes))
 }
