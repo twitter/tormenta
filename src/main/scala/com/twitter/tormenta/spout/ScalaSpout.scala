@@ -25,7 +25,7 @@ import com.twitter.tormenta.scheme.ScalaScheme
  */
 
 trait ScalaSpout[T] extends java.io.Serializable {
-  def getSpout: IRichSpout = getSpout(identity _)
+  def getSpout: IRichSpout = getSpout(identity(_))
   def getSpout[R](transformer: (ScalaScheme[T]) => ScalaScheme[R]): IRichSpout
   def parallelism: Int
 }
