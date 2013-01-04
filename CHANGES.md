@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.2.1 ###
+
+* Added Conjars repo back in. Depend on public version of `bijection`.
+
 ### Version 0.2.0 ###
 
 * Modified `ScalaKryoFactory` for easier extensions.
