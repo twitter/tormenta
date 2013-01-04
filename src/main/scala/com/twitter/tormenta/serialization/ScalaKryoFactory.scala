@@ -17,63 +17,36 @@ limitations under the License.
 package com.twitter.tormenta.serialization
 
 import backtype.storm.serialization.IKryoFactory
-import com.esotericsoftware.kryo.{ Kryo, Serializer }
-import com.twitter.chill.{ KryoSerializer, ObjectSerializer }
+import com.esotericsoftware.kryo.Kryo
+import com.twitter.chill.KryoSerializer
 import java.util.{ HashMap, Map => JMap }
-import org.objenesis.strategy.StdInstantiatorStrategy
 
 /**
  *  @author Oscar Boykin
  *  @author Sam Ritchie
  */
 
-class ScalaKryoFactory extends IKryoFactory {
-  def getKryo() = {
-    val k = new Kryo {
-      lazy val objSer = new ObjectSerializer[AnyRef]
-      override def newDefaultSerializer(cls: Class[_]): Serializer[_] = {
-        if(objSer.accepts(cls))
-          objSer
-        else
-          super.newDefaultSerializer(cls)
-      }
-    }
-    k.setInstantiatorStrategy(new StdInstantiatorStrategy());
-    k
-  }
-
+class ScalaKryoFactory extends IKryoFactory with KryoSerializer {
   override def getKryo(conf: JMap[_,_]): Kryo = getKryo
+  override def preRegister(k: Kryo, conf: JMap[_,_]) { populate(k) }
+  override def postRegister(k: Kryo, conf: JMap[_,_]) { }
+  override def postDecorate(k: Kryo, conf: JMap[_,_]) { }
 
-  // Instantiate and preRegister a single Kryo instance to use in
-  // registeredByDefault.
-  val baseKryo = {
-    val k = getKryo
-    preRegister(k, new HashMap[Any,Any]())
-    k
-  }
-
-  // ScalaKryoFactory registers a lot of non-primitives by default;
-  // this function returns true if the supplied class fits that
-  // description, false otherwise.
-  def registeredByDefault(klass: Class[_]) =
-    baseKryo.getClassResolver.getRegistration(klass) != null
-
-  override def preRegister(k: Kryo, conf: JMap[_,_]) {
+  def populate(k: Kryo) {
     // Register all the chill serializers:
     KryoSerializer.registerAll(k)
 
     //Add commonly used types with Fields serializer:
     registeredTypes.foreach { cls => k.register(cls) }
   }
-  override def postRegister(k: Kryo, conf: JMap[_,_]) { }
-  override def postDecorate(k: Kryo, conf: JMap[_,_]) { }
 
   // TODO: this was cargo-culted from
   // [Scalding](https://github.com/twitter/scalding/blob/develop/src/main/scala/com/twitter/scalding/serialization/KryoHadoop.scala),
   // which in turn cargo-culted from Spark.
   //
   // Types to pre-register.
-  def registeredTypes : List[Class[_]] = {
+
+  def registeredTypes: List[Class[_]] = {
     List(
       // Arrays
       Array(1), Array(1.0), Array(1.0f), Array(1L), Array(""), Array(("", "")),

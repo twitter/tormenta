@@ -17,37 +17,43 @@ limitations under the License.
 package com.twitter.tormenta.scheme
 
 import backtype.storm.tuple.{ Fields, Values }
-import backtype.storm.spout.Scheme
+import backtype.storm.spout.MultiScheme
+import java.util.{ List => JList }
+import scala.collection.JavaConverters._
+
 
 /**
  *  @author Oscar Boykin
  *  @author Sam Ritchie
  */
 
-trait ScalaScheme[T] extends Scheme with java.io.Serializable {
-
-  def decode(bytes: Array[Byte]): Option[T]
-
-  def filter(fn: (T) => Boolean): ScalaScheme[T] = {
-    val outerDecode = this.decode _
+object ScalaScheme {
+  def apply[T](decodeFn: (Array[Byte]) => TraversableOnce[T]) =
     new ScalaScheme[T] {
-      override def decode(bytes: Array[Byte]) = outerDecode(bytes) filter { fn(_) }
+      override def decode(bytes: Array[Byte]) = decodeFn(bytes)
     }
-  }
-  def map[R](fn: (T) => R): ScalaScheme[R] = {
-    val outerDecode = this.decode _
-    new ScalaScheme[R] {
-      override def decode(bytes: Array[Byte]) = outerDecode(bytes) map { fn(_) }
-    }
-  }
+}
 
-  // TODO: Think of a more elegant way to handle exceptions vs
-  // catching all. Can we expose this error handling to the user?
+trait ScalaScheme[T] extends MultiScheme with java.io.Serializable {
+  def decode(bytes: Array[Byte]): TraversableOnce[T]
+
+  def filter(fn: (T) => Boolean): ScalaScheme[T] =
+    ScalaScheme(this.decode(_) filter { fn(_) })
+
+  def map[R](fn: (T) => R): ScalaScheme[R] =
+    ScalaScheme(this.decode(_) map { fn(_) })
+
+  def flatMap[R](fn: (T) => TraversableOnce[R]): ScalaScheme[R] =
+    ScalaScheme(this.decode(_) flatMap { fn(_) })
+
+  private def cast(t: T): JList[AnyRef] = new Values(t.asInstanceOf[AnyRef])
+
+  // TODO: Catch exceptions and put them into an "Either" type. The
+  // final scheme should return Either[Exception,Result].
   override def deserialize(bytes: Array[Byte]) = {
     try {
-      decode(bytes)
-      .map { t: T => new Values(t.asInstanceOf[AnyRef]) }
-      .getOrElse(null)
+      val tuples = decode(bytes) map { cast(_) }
+      if (!tuples.isEmpty) tuples.toIterable.asJava else null
     } catch {
       case _ => null
     }

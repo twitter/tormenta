@@ -1,6 +1,6 @@
 name := "tormenta"
 
-version := "0.1.1"
+version := "0.2.0"
 
 organization := "com.twitter"
 
@@ -12,20 +12,17 @@ scalacOptions += "-Yresolve-term-conflict:package"
 resolvers ++= Seq(
   "sonatype-snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
   "sonatype-releases"  at "http://oss.sonatype.org/content/repositories/releases",
-  "Clojars Repository" at "http://clojars.org/repo",
-  "Conjars Repository" at "http://conjars.org/repo",
-  "Twitter Maven" at "http://maven.twttr.com",
-  "Twitter SVN Maven" at "https://svn.twitter.biz/maven-public"
+  "Clojars Repository" at "http://clojars.org/repo"
 )
 
 libraryDependencies ++= Seq(
   "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
   "org.scala-tools.testing" % "specs_2.9.0-1" % "1.6.8" % "test",
-  "storm" % "storm" % "0.8.2-wip11",
-  "storm" % "storm-kafka" % "0.8.0-wip4",
-  "storm" % "storm-kestrel" % "0.7.2-snap3",
-  "com.twitter" % "util-core" % "5.3.7",
-  "com.twitter" %% "chill" % "0.0.3"
+  "storm" % "storm" % "0.9.0-wip9",
+  "storm" % "storm-kafka" % "0.9.0-wip6-scala292-multischeme",
+  "storm" % "storm-kestrel" % "0.9.0-wip5-multischeme",
+  "com.twitter" %% "bijection" % "0.1.0",
+  "com.twitter" %% "chill" % "0.1.0"
 )
 
 parallelExecution in Test := true
