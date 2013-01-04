@@ -19,7 +19,7 @@ package com.twitter.tormenta.scheme
 import backtype.storm.tuple.{ Fields, Values }
 
 import com.twitter.chill.MeatLocker
-import com.twitter.util.Bijection
+import com.twitter.bijection.Bijection
 
 /**
  *  @author Oscar Boykin
@@ -27,10 +27,10 @@ import com.twitter.util.Bijection
  */
 
 object BijectionScheme {
-  implicit def apply[T](bijection: Bijection[T,Array[Byte]]) = new BijectionScheme(bijection)
+  implicit def apply[T](bijection: Bijection[T, Array[Byte]]) = new BijectionScheme(bijection)
 }
 
-class BijectionScheme[T](@transient bijection: Bijection[T,Array[Byte]]) extends ScalaScheme[T] {
+class BijectionScheme[T](@transient bijection: Bijection[T, Array[Byte]]) extends ScalaScheme[T] {
   val bijectionBox = MeatLocker(bijection)
   override def decode(bytes: Array[Byte]) = Some(bijectionBox.get.invert(bytes))
 }
