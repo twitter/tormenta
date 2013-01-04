@@ -27,7 +27,7 @@ import com.twitter.bijection.Bijection
  */
 
 object BijectionScheme {
-  implicit def apply[T](bijection: Bijection[T, Array[Byte]]) = new BijectionScheme(bijection)
+  def apply[T](implicit bijection: Bijection[T, Array[Byte]]) = new BijectionScheme(bijection)
 }
 
 class BijectionScheme[T](@transient bijection: Bijection[T, Array[Byte]]) extends ScalaScheme[T] {
