@@ -1,6 +1,6 @@
 name := "tormenta"
 
-version := "0.2.0"
+version := "0.2.1"
 
 organization := "com.twitter"
 
@@ -12,7 +12,8 @@ scalacOptions += "-Yresolve-term-conflict:package"
 resolvers ++= Seq(
   "sonatype-snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
   "sonatype-releases"  at "http://oss.sonatype.org/content/repositories/releases",
-  "Clojars Repository" at "http://clojars.org/repo"
+  "Clojars Repository" at "http://clojars.org/repo",
+  "Conjars Repository" at "http://conjars.org/repo"
 )
 
 libraryDependencies ++= Seq(
@@ -21,7 +22,7 @@ libraryDependencies ++= Seq(
   "storm" % "storm" % "0.9.0-wip9",
   "storm" % "storm-kafka" % "0.9.0-wip6-scala292-multischeme",
   "storm" % "storm-kestrel" % "0.9.0-wip5-multischeme",
-  "com.twitter" %% "bijection" % "0.1.0",
+  "com.twitter" %% "bijection-core" % "0.1.0",
   "com.twitter" %% "chill" % "0.1.0"
 )
 
