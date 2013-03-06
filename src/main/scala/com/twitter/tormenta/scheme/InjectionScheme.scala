@@ -19,18 +19,18 @@ package com.twitter.tormenta.scheme
 import backtype.storm.tuple.{ Fields, Values }
 
 import com.twitter.chill.MeatLocker
-import com.twitter.bijection.Bijection
+import com.twitter.bijection.Injection
 
 /**
  *  @author Oscar Boykin
  *  @author Sam Ritchie
  */
 
-object BijectionScheme {
-  def apply[T](implicit bijection: Bijection[T, Array[Byte]]) = new BijectionScheme(bijection)
+object InjectionScheme {
+  def apply[T](implicit bijection: Injection[T, Array[Byte]]) = new InjectionScheme(bijection)
 }
 
-class BijectionScheme[T](@transient bijection: Bijection[T, Array[Byte]]) extends ScalaScheme[T] {
-  val bijectionBox = MeatLocker(bijection)
-  override def decode(bytes: Array[Byte]) = Some(bijectionBox.get.invert(bytes))
+class InjectionScheme[T](@transient injection: Injection[T, Array[Byte]]) extends ScalaScheme[T] {
+  val injectionBox = MeatLocker(injection)
+  override def decode(bytes: Array[Byte]) = injectionBox.get.invert(bytes)
 }

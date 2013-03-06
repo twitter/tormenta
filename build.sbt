@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "storm" % "storm" % "0.9.0-wip9",
   "storm" % "storm-kafka" % "0.9.0-wip6-scala292-multischeme",
   "storm" % "storm-kestrel" % "0.9.0-wip5-multischeme",
-  "com.twitter" %% "bijection-core" % "0.1.0",
+  "com.twitter" %% "bijection-core" % "0.3.0",
   "com.twitter" %% "chill" % "0.1.0"
 )
 
