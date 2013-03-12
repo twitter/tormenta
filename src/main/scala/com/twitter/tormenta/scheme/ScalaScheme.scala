@@ -55,7 +55,7 @@ trait ScalaScheme[T] extends MultiScheme with java.io.Serializable {
       val tuples = decode(bytes) map { cast(_) }
       if (!tuples.isEmpty) tuples.toIterable.asJava else null
     } catch {
-      case _ => null
+      case _: Throwable => null
     }
   }
 
