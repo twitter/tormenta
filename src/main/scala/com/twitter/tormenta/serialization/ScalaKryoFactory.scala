@@ -18,7 +18,8 @@ package com.twitter.tormenta.serialization
 
 import backtype.storm.serialization.IKryoFactory
 import com.esotericsoftware.kryo.Kryo
-import com.twitter.chill.KryoSerializer
+import com.twitter.chill.{ KryoBase, KryoSerializer }
+import org.objenesis.strategy.StdInstantiatorStrategy
 import java.util.{ HashMap, Map => JMap }
 
 /**
@@ -26,8 +27,13 @@ import java.util.{ HashMap, Map => JMap }
  *  @author Sam Ritchie
  */
 
-class ScalaKryoFactory extends IKryoFactory with KryoSerializer {
-  override def getKryo(conf: JMap[_,_]): Kryo = getKryo
+class ScalaKryoFactory extends IKryoFactory {
+  override def getKryo(conf: JMap[_,_]): Kryo = {
+    val k = new KryoBase
+    k.setRegistrationRequired(false)
+    k.setInstantiatorStrategy(new StdInstantiatorStrategy)
+    k
+  }
   override def preRegister(k: Kryo, conf: JMap[_,_]) { populate(k) }
   override def postRegister(k: Kryo, conf: JMap[_,_]) { }
   override def postDecorate(k: Kryo, conf: JMap[_,_]) { }
