@@ -1,5 +1,10 @@
 # tormenta #
 
+### Version 0.3.0 ###
+
+* Remove bijection dependency and `BijectionScheme` (This should just be a FunctionScheme anyway.)
+* Add scala 2.10 cross build
+
 ### Version 0.2.1 ###
 
 * Added Conjars repo back in. Depend on public version of `bijection`.
