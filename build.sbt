@@ -1,10 +1,12 @@
 name := "tormenta"
 
-version := "0.3.0"
+version := "0.3.1"
 
 organization := "com.twitter"
 
 crossScalaVersions := Seq("2.9.2", "2.10.0")
+
+javacOptions ++= Seq("-target", "1.6", "-source", "1.6")
 
 scalacOptions += "-Yresolve-term-conflict:package"
 
