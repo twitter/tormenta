@@ -6,6 +6,8 @@ organization := "com.twitter"
 
 crossScalaVersions := Seq("2.9.2", "2.10.0")
 
+javacOptions ++= Seq("-target", "1.6", "-source", "1.6")
+
 scalacOptions += "-Yresolve-term-conflict:package"
 
 resolvers ++= Seq(
