@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.3.1 ###
+
+* Republish using jdk6.
+
 ### Version 0.3.0 ###
 
 * Remove bijection dependency and `BijectionScheme` (This should just be a FunctionScheme anyway.)
