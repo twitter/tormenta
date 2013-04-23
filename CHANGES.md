@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.3.2 ###
+
+* Add ability to customize zkRoot in KafkaSpout.
+
 ### Version 0.3.1 ###
 
 * Republish using jdk6.
