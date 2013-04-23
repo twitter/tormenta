@@ -24,15 +24,9 @@ import storm.kafka.{ KafkaSpout => StormKafkaSpout, KafkaConfig, SpoutConfig }
  *  @author Sam Ritchie
  */
 
-// TODO: Make zookeeper information configurable
-class KafkaSpout[T](scheme: ScalaScheme[T], zkHost: String, topic: String, appID: String, val parallelism: Int = 1)
-extends ScalaSpout[T] {
-
+class KafkaSpout[T](scheme: ScalaScheme[T], zkHost: String, topic: String, appID: String, zkRoot: String, val parallelism: Int = 1) extends ScalaSpout[T] {
   override def getSpout[R](transformer: (ScalaScheme[T]) => ScalaScheme[R]) = {
-    val spoutConfig = new SpoutConfig(new KafkaConfig.ZkHosts(zkHost, "/brokers"),
-                                      topic,
-                                      "/kafkastorm",
-                                      appID)
+    val spoutConfig = new SpoutConfig(new KafkaConfig.ZkHosts(zkHost, "/brokers"), topic, zkRoot, appID)
 
     spoutConfig.scheme = transformer(scheme)
     spoutConfig.forceStartOffsetTime(-1)
