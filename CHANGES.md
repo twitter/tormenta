@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.4.0 ###
+
+* More KafkaSpout customization.
+
 ### Version 0.3.2 ###
 
 * Add ability to customize zkRoot in KafkaSpout.
