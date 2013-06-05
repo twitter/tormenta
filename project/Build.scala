@@ -30,7 +30,8 @@ object TormentaBuild extends Build {
     resolvers ++= Seq(
       Opts.resolver.sonatypeSnapshots,
       Opts.resolver.sonatypeReleases,
-      "Clojars Repository" at "http://clojars.org/repo"
+      "Clojars Repository" at "http://clojars.org/repo",
+      "Conjars Repository" at "http://conjars.org/repo"
     ),
 
     parallelExecution in Test := true,
