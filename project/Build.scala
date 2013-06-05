@@ -104,7 +104,8 @@ object TormentaBuild extends Build {
     publish := { }, // skip publishing for this root project.
     publishLocal := { }
   ).aggregate(
-    tormentaCore
+    tormentaCore,
+    tormentaTwitter
   )
 
   def module(name: String) = {
@@ -123,4 +124,8 @@ object TormentaBuild extends Build {
       "com.twitter" %% "chill" % "0.2.1"
     )
   )
+
+  lazy val tormentaTwitter = module("twitter").settings(
+    libraryDependencies += "org.twitter4j" % "twitter4j-stream" % "3.0.3"
+  ).dependsOn(tormentaCore % "test->test;compile->compile")
 }
