@@ -36,6 +36,7 @@ object ScalaSpout {
       override def invert(spout: ScalaSpout[U]) = spout.map(bij.invert(_))
     }
 
+  // TODO: Should this be a TravOnce[TravOnce[T]] to test multi-emit?
   def fromTraversable[T](items: TraversableOnce[T]): ScalaSpout[T] =
     new RichScalaSpout[T] {
       private val iter = items.toIterator
