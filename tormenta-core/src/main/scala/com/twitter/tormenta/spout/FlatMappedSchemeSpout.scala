@@ -16,17 +16,18 @@ limitations under the License.
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.spout.KestrelThriftSpout
+import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.ScalaScheme
-import scala.collection.JavaConverters._
 
 /**
- *  @author Oscar Boykin
- *  @author Sam Ritchie
- */
+  * Spout that performs a flatMap operation on its contained
+  * SchemeSpout. Used to implement map, filter and flatMap on
+  * SchemeSpout.
+  */
 
-class KestrelSpout[T](scheme: ScalaScheme[T], hosts: List[String], name: String, port: Int = 2229)
-    extends SchemeSpout[T] {
-  override def getSpout[R](transformer: ScalaScheme[T] => ScalaScheme[R]) =
-    new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme))
+class FlatMappedSchemeSpout[T, U](spout: SchemeSpout[T])(fn: T => TraversableOnce[U])
+    extends SchemeSpout[U] {
+  override def getSpout = spout.getSpout(_.flatMap(fn))
+  override def getSpout[R](transform: ScalaScheme[U] => ScalaScheme[R]) =
+    spout.getSpout(scheme => transform(scheme.flatMap(fn)))
 }

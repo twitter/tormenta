@@ -18,9 +18,10 @@ package com.twitter.tormenta.scheme
 
 import backtype.storm.tuple.{ Fields, Values }
 import backtype.storm.spout.MultiScheme
+import com.twitter.bijection.{ AbstractBijection, Bijection, ImplicitBijection }
 import java.util.{ List => JList }
 import scala.collection.JavaConverters._
-
+import java.io.Serializable
 
 /**
  *  @author Oscar Boykin
@@ -28,36 +29,57 @@ import scala.collection.JavaConverters._
  */
 
 object ScalaScheme {
-  def apply[T](decodeFn: (Array[Byte]) => TraversableOnce[T]) =
+  val identity: ScalaScheme[Array[Byte]] = ScalaScheme(Some(_))
+
+  implicit def bijection[T, U](implicit bij: ImplicitBijection[T, U])
+      : Bijection[ScalaScheme[T], ScalaScheme[U]] =
+    new AbstractBijection[ScalaScheme[T], ScalaScheme[U]] {
+      def apply(scheme: ScalaScheme[T]) = scheme.map(bij(_))
+      override def invert(scheme: ScalaScheme[U]) = scheme.map(bij.invert(_))
+    }
+
+  def apply[T](decodeFn: Array[Byte] => TraversableOnce[T]) =
     new ScalaScheme[T] {
       override def decode(bytes: Array[Byte]) = decodeFn(bytes)
     }
 }
 
-trait ScalaScheme[T] extends MultiScheme with java.io.Serializable {
+trait ScalaScheme[T] extends MultiScheme with Serializable { self =>
+  /**
+    * This is the only method you're required to implement.
+    */
   def decode(bytes: Array[Byte]): TraversableOnce[T]
 
-  def filter(fn: (T) => Boolean): ScalaScheme[T] =
-    ScalaScheme(this.decode(_) filter { fn(_) })
+  def handle(t: Throwable): TraversableOnce[T] = List.empty
 
-  def map[R](fn: (T) => R): ScalaScheme[R] =
-    ScalaScheme(this.decode(_) map { fn(_) })
+  def withHandler(fn: Throwable => TraversableOnce[T]): ScalaScheme[T] =
+    new ScalaScheme[T] {
+      override def handle(t: Throwable) = fn(t)
+      override def decode(bytes: Array[Byte]) = self.decode(bytes)
+    }
 
-  def flatMap[R](fn: (T) => TraversableOnce[R]): ScalaScheme[R] =
-    ScalaScheme(this.decode(_) flatMap { fn(_) })
+  def filter(fn: T => Boolean): ScalaScheme[T] =
+    ScalaScheme(self.decode(_).filter(fn))
+
+  def map[R](fn: T => R): ScalaScheme[R] =
+    ScalaScheme(self.decode(_).map(fn))
+
+  def flatMap[R](fn: T => TraversableOnce[R]): ScalaScheme[R] =
+    ScalaScheme(self.decode(_).flatMap(fn))
 
   private def cast(t: T): JList[AnyRef] = new Values(t.asInstanceOf[AnyRef])
+  private def toJava(items: TraversableOnce[T]) =
+    if (!items.isEmpty)
+      items.map(cast).toIterable.asJava
+    else
+      null
 
-  // TODO: Catch exceptions and put them into an "Either" type. The
-  // final scheme should return Either[Exception,Result].
-  override def deserialize(bytes: Array[Byte]) = {
+  override def deserialize(bytes: Array[Byte]) =
     try {
-      val tuples = decode(bytes) map { cast(_) }
-      if (!tuples.isEmpty) tuples.toIterable.asJava else null
+      toJava(decode(bytes))
     } catch {
-      case _: Throwable => null
+      case t: Throwable => toJava(handle(t))
     }
-  }
 
   override lazy val getOutputFields = new Fields("summingEvent")
 }

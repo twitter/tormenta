@@ -24,8 +24,9 @@ import storm.kafka.{ KafkaSpout => StormKafkaSpout, KafkaConfig, SpoutConfig }
  *  @author Sam Ritchie
  */
 
-class KafkaSpout[T](scheme: ScalaScheme[T], zkHost: String, brokerZkPath: String, topic: String, appID: String, zkRoot: String, val parallelism: Int = 1) extends ScalaSpout[T] {
-  override def getSpout[R](transformer: (ScalaScheme[T]) => ScalaScheme[R]) = {
+class KafkaSpout[T](scheme: ScalaScheme[T], zkHost: String, brokerZkPath: String, topic: String, appID: String, zkRoot: String)
+    extends SchemeSpout[T] {
+  override def getSpout[R](transformer: ScalaScheme[T] => ScalaScheme[R]) = {
     // Spout ID needs to be unique per spout, so create that string by taking the topic and appID.
     val spoutId = topic + appID
     val spoutConfig = new SpoutConfig(new KafkaConfig.ZkHosts(zkHost, brokerZkPath), topic, zkRoot, spoutId)

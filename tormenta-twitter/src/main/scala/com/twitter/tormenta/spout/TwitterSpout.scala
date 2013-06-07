@@ -16,23 +16,55 @@
 
 package com.twitter.tormenta.spout
 
-import com.twitter.tormenta.scheme.ScalaScheme
-import twitter4j.{ Status, TwitterStreamFactory }
+import backtype.storm.spout.SpoutOutputCollector
+import backtype.storm.task.TopologyContext
+import java.util.{ Map => JMap }
+import java.util.concurrent.LinkedBlockingQueue
+import twitter4j._
 
 /**
-  * ScalaSpout for Twitter's streaming API.
+  * Storm Spout implementation for Twitter's streaming API.
   *
   * @author Sam Ritchie
   */
 
 object TwitterSpout {
-  import TwitterStreamingSpout.{ FIELD_NAME, QUEUE_LIMIT }
+  val QUEUE_LIMIT = 1000 // default max queue size.
+  val FIELD_NAME = "tweet" // default output field name.
 
-  def apply(factory: TwitterStreamFactory, limit: Int = QUEUE_LIMIT, fieldName: String = FIELD_NAME): ScalaSpout[Status] =
-    new ScalaSpout[Status] {
-      override val parallelism = 1
-      override def getSpout[R](transformer: ScalaScheme[Status] => ScalaScheme[R]) = {
-        TwitterStreamingSpout.of[R](factory, limit, fieldName)(transformer)
-      }
+  def apply(
+    factory: TwitterStreamFactory,
+    limit: Int = QUEUE_LIMIT,
+    fieldName: String = FIELD_NAME): TwitterSpout =
+    new TwitterSpout(factory, limit, fieldName)
+}
+
+class TwitterSpout(factory: TwitterStreamFactory, limit: Int, override val fieldName: String)
+    extends RichScalaSpout[Status] {
+
+  lazy val queue = new LinkedBlockingQueue[Status](limit)
+  var stream: TwitterStream = null
+
+  lazy val listener = new StatusListener {
+    def onStatus(status: Status) {
+      queue.offer(status)
     }
+    def onDeletionNotice(notice: StatusDeletionNotice) { }
+    def onScrubGeo(userId: Long, upToStatusId: Long) { }
+    def onStallWarning(warning: StallWarning) { }
+    def onTrackLimitationNotice(numberOfLimitedStatuses: Int) { }
+    def onException(ex: Exception) { }
+  }
+
+  override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
+    super.open(conf, context, coll)
+    stream = factory.getInstance
+    stream.addListener(listener)
+
+    // TODO: Add support beyond "sample". (GardenHose, for example.)
+    stream.sample
+  }
+  override def poll = Option(queue.poll)
+
+  override def close { stream.shutdown }
 }
