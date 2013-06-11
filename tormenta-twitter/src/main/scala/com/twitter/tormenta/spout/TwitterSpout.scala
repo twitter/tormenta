@@ -40,7 +40,7 @@ object TwitterSpout {
 }
 
 class TwitterSpout(factory: TwitterStreamFactory, limit: Int, override val fieldName: String)
-    extends RichScalaSpout[Status] {
+    extends BaseSpout[Status] {
 
   lazy val queue = new LinkedBlockingQueue[Status](limit)
   var stream: TwitterStream = null
