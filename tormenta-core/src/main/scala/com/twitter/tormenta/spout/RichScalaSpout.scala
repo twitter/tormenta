@@ -24,7 +24,7 @@ import backtype.storm.tuple.{ Fields, Values }
 import backtype.storm.utils.Time
 import java.util.{ Map => JMap }
 
-trait RichScalaSpout[+T] extends BaseRichSpout with ScalaSpout[T] { self =>
+trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
   var collector: SpoutOutputCollector = null
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
@@ -47,7 +47,7 @@ trait RichScalaSpout[+T] extends BaseRichSpout with ScalaSpout[T] { self =>
   override def getSpout = this
 
   override def flatMap[U](fn: T => TraversableOnce[U]) =
-    new RichScalaSpout[U] {
+    new BaseSpout[U] {
       override def fieldName = self.fieldName
       override def onEmpty = self.onEmpty
       override def poll = self.poll.flatMap(fn)

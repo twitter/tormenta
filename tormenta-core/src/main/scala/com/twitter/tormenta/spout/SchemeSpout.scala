@@ -19,7 +19,7 @@ package com.twitter.tormenta.spout
 import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
 
-trait SchemeSpout[+T] extends ScalaSpout[T] {
+trait SchemeSpout[+T] extends Spout[T] {
   /**
     * This is the only required override.
     */
@@ -27,6 +27,6 @@ trait SchemeSpout[+T] extends ScalaSpout[T] {
 
   override def getSpout = getSpout(identity(_))
 
-  def flatMap[U](fn: T => TraversableOnce[U]): ScalaSpout[U] =
+  def flatMap[U](fn: T => TraversableOnce[U]): Spout[U] =
     new FlatMappedSchemeSpout(this)(fn)
 }
