@@ -23,7 +23,7 @@ trait SchemeSpout[+T] extends ScalaSpout[T] {
   /**
     * This is the only required override.
     */
-  def getSpout[R >: T](transformer: Scheme[T] => Scheme[R]): IRichSpout
+  def getSpout[R](transformer: Scheme[T] => Scheme[R]): IRichSpout
 
   override def getSpout = getSpout(identity(_))
 
