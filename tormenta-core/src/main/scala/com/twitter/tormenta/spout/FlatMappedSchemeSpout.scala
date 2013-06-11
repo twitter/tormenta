@@ -17,7 +17,7 @@ limitations under the License.
 package com.twitter.tormenta.spout
 
 import backtype.storm.topology.IRichSpout
-import com.twitter.tormenta.scheme.ScalaScheme
+import com.twitter.tormenta.scheme.Scheme
 
 /**
   * Spout that performs a flatMap operation on its contained
@@ -28,6 +28,6 @@ import com.twitter.tormenta.scheme.ScalaScheme
 class FlatMappedSchemeSpout[T, U](spout: SchemeSpout[T])(fn: T => TraversableOnce[U])
     extends SchemeSpout[U] {
   override def getSpout = spout.getSpout(_.flatMap(fn))
-  override def getSpout[R](transform: ScalaScheme[U] => ScalaScheme[R]) =
+  override def getSpout[R](transform: Scheme[U] => Scheme[R]) =
     spout.getSpout(scheme => transform(scheme.flatMap(fn)))
 }

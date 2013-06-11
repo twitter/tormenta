@@ -28,23 +28,23 @@ import java.io.Serializable
  *  @author Sam Ritchie
  */
 
-object ScalaScheme {
-  val identity: ScalaScheme[Array[Byte]] = ScalaScheme(Some(_))
+object Scheme {
+  val identity: Scheme[Array[Byte]] = Scheme(Some(_))
 
   implicit def bijection[T, U](implicit bij: ImplicitBijection[T, U])
-      : Bijection[ScalaScheme[T], ScalaScheme[U]] =
-    new AbstractBijection[ScalaScheme[T], ScalaScheme[U]] {
-      def apply(scheme: ScalaScheme[T]) = scheme.map(bij(_))
-      override def invert(scheme: ScalaScheme[U]) = scheme.map(bij.invert(_))
+      : Bijection[Scheme[T], Scheme[U]] =
+    new AbstractBijection[Scheme[T], Scheme[U]] {
+      def apply(scheme: Scheme[T]) = scheme.map(bij(_))
+      override def invert(scheme: Scheme[U]) = scheme.map(bij.invert(_))
     }
 
   def apply[T](decodeFn: Array[Byte] => TraversableOnce[T]) =
-    new ScalaScheme[T] {
+    new Scheme[T] {
       override def decode(bytes: Array[Byte]) = decodeFn(bytes)
     }
 }
 
-trait ScalaScheme[T] extends MultiScheme with Serializable { self =>
+trait Scheme[T] extends MultiScheme with Serializable { self =>
   /**
     * This is the only method you're required to implement.
     */
@@ -52,20 +52,20 @@ trait ScalaScheme[T] extends MultiScheme with Serializable { self =>
 
   def handle(t: Throwable): TraversableOnce[T] = List.empty
 
-  def withHandler(fn: Throwable => TraversableOnce[T]): ScalaScheme[T] =
-    new ScalaScheme[T] {
+  def withHandler(fn: Throwable => TraversableOnce[T]): Scheme[T] =
+    new Scheme[T] {
       override def handle(t: Throwable) = fn(t)
       override def decode(bytes: Array[Byte]) = self.decode(bytes)
     }
 
-  def filter(fn: T => Boolean): ScalaScheme[T] =
-    ScalaScheme(self.decode(_).filter(fn))
+  def filter(fn: T => Boolean): Scheme[T] =
+    Scheme(self.decode(_).filter(fn))
 
-  def map[R](fn: T => R): ScalaScheme[R] =
-    ScalaScheme(self.decode(_).map(fn))
+  def map[R](fn: T => R): Scheme[R] =
+    Scheme(self.decode(_).map(fn))
 
-  def flatMap[R](fn: T => TraversableOnce[R]): ScalaScheme[R] =
-    ScalaScheme(self.decode(_).flatMap(fn))
+  def flatMap[R](fn: T => TraversableOnce[R]): Scheme[R] =
+    Scheme(self.decode(_).flatMap(fn))
 
   private def cast(t: T): JList[AnyRef] = new Values(t.asInstanceOf[AnyRef])
   private def toJava(items: TraversableOnce[T]) =
