@@ -20,7 +20,7 @@ object TormentaBuild extends Build {
 
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
-    version := "0.4.0",
+    version := "0.5.0-SNAPSHOT",
     crossScalaVersions := Seq("2.9.2", "2.10.0"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
@@ -28,6 +28,7 @@ object TormentaBuild extends Build {
       "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
       "org.scala-tools.testing" %% "specs" % "1.6.9" % "test"
     ),
+    scalacOptions ++= Seq("-unchecked", "-deprecation", "-Yresolve-term-conflict:package"),
     resolvers ++= Seq(
       Opts.resolver.sonatypeSnapshots,
       Opts.resolver.sonatypeReleases,
