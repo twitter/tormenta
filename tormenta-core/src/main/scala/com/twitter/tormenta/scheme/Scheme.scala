@@ -44,7 +44,7 @@ object Scheme {
     }
 }
 
-trait Scheme[T] extends MultiScheme with Serializable { self =>
+trait Scheme[+T] extends MultiScheme with Serializable { self =>
   /**
     * This is the only method you're required to implement.
     */
@@ -52,8 +52,8 @@ trait Scheme[T] extends MultiScheme with Serializable { self =>
 
   def handle(t: Throwable): TraversableOnce[T] = List.empty
 
-  def withHandler(fn: Throwable => TraversableOnce[T]): Scheme[T] =
-    new Scheme[T] {
+  def withHandler[U >: T](fn: Throwable => TraversableOnce[U]): Scheme[U] =
+    new Scheme[U] {
       override def handle(t: Throwable) = fn(t)
       override def decode(bytes: Array[Byte]) = self.decode(bytes)
     }
@@ -67,8 +67,8 @@ trait Scheme[T] extends MultiScheme with Serializable { self =>
   def flatMap[R](fn: T => TraversableOnce[R]): Scheme[R] =
     Scheme(self.decode(_).flatMap(fn))
 
-  private def cast(t: T): JList[AnyRef] = new Values(t.asInstanceOf[AnyRef])
-  private def toJava(items: TraversableOnce[T]) =
+  private def cast(t: Any): JList[AnyRef] = new Values(t.asInstanceOf[AnyRef])
+  private def toJava(items: TraversableOnce[Any]) =
     if (!items.isEmpty)
       items.map(cast).toIterable.asJava
     else

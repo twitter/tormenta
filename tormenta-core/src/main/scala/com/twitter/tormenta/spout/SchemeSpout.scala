@@ -19,11 +19,11 @@ package com.twitter.tormenta.spout
 import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
 
-trait SchemeSpout[T] extends ScalaSpout[T] {
+trait SchemeSpout[+T] extends ScalaSpout[T] {
   /**
     * This is the only required override.
     */
-  def getSpout[R](transformer: Scheme[T] => Scheme[R]): IRichSpout
+  def getSpout[R >: T](transformer: Scheme[T] => Scheme[R]): IRichSpout
 
   override def getSpout = getSpout(identity(_))
 
