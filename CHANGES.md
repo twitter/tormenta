@@ -1,5 +1,14 @@
 # tormenta #
 
+### Version 0.5.0 ###
+
+* tormenta becomes tormenta-core
+* Add tormenta-twitter
+* Spouts gain map, filter, flatMap
+* ScalaSpout -> Spout
+* ScalaScheme -> Scheme
+* Schemes and Spouts now have proper variance
+
 ### Version 0.4.0 ###
 
 * More KafkaSpout customization.
