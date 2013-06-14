@@ -16,16 +16,17 @@ limitations under the License.
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.topology.IRichSpout
-import com.twitter.tormenta.scheme.ScalaScheme
+import backtype.storm.spout.KestrelThriftSpout
+import com.twitter.tormenta.scheme.Scheme
+import scala.collection.JavaConverters._
 
 /**
  *  @author Oscar Boykin
  *  @author Sam Ritchie
  */
 
-trait ScalaSpout[T] extends java.io.Serializable {
-  def getSpout: IRichSpout = getSpout(identity(_))
-  def getSpout[R](transformer: (ScalaScheme[T]) => ScalaScheme[R]): IRichSpout
-  def parallelism: Int
+class KestrelSpout[+T](scheme: Scheme[T], hosts: List[String], name: String, port: Int = 2229)
+    extends SchemeSpout[T] {
+  override def getSpout[R](transformer: Scheme[T] => Scheme[R]) =
+    new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme))
 }

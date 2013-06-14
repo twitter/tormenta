@@ -23,9 +23,13 @@ import org.objenesis.strategy.StdInstantiatorStrategy
 import java.util.{ HashMap, Map => JMap }
 
 /**
- *  @author Oscar Boykin
- *  @author Sam Ritchie
- */
+  * TODO: Delete this and the Chill dependency when this class moves
+  * into chill-storm. We'll need to keep the bijection dep, or delete
+  * the bijections.
+  *
+  *  @author Oscar Boykin
+  *  @author Sam Ritchie
+  */
 
 class ScalaKryoFactory extends IKryoFactory {
   override def getKryo(conf: JMap[_,_]): Kryo = {

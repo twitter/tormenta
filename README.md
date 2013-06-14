@@ -4,19 +4,19 @@ Scala extensions for the [Storm](https://github.com/nathanmarz/storm) distribute
 
 ```scala
 // produces strings:
-val scheme: ScalaScheme[String] = new StringScheme
+val scheme: Scheme[String] = new StringScheme
 
 // produces integers w/ string length:
-val mappedScheme: ScalaScheme[Int] = scheme map { _.length }
+val mappedScheme: Scheme[Int] = scheme.map(_.length)
 
 // filters out all tuples less than 5:
-val filteredScheme: ScalaScheme[Int] = mappedScheme filter { _ > 5 }
+val filteredScheme: Scheme[Int] = mappedScheme.filter(_ > 5)
 
 // produces lengths for input strings > length of 5
 val spout: KestrelSpout[Int] = new KestrelSpout(filteredScheme, hostSeq, "spout")
 ```
 
-To use a `ScalaSpout[T]` in a Storm topology, call the `getSpout` method:
+To use a `Spout[T]` in a Storm topology, call the `getSpout` method:
 
 ```scala
 topologyBuilder.setSpout("spoutName", spout.getSpout, 10)
@@ -26,7 +26,7 @@ Now you're cooking with gas.
 
 ## Maven
 
-Current version is `0.4.0`. groupid=`"com.twitter"` artifact=`"tormenta_2.9.2"`.
+Current version is `0.5.0`. groupid=`"com.twitter"` artifact=`"tormenta-core_2.9.2"`.
 
 ## Authors
 
