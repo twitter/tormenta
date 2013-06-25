@@ -18,6 +18,10 @@ package com.twitter.tormenta.spout
 
 import backtype.storm.spout.SpoutOutputCollector
 import backtype.storm.task.TopologyContext
+import backtype.storm.topology.OutputFieldsDeclarer
+import backtype.storm.topology.base.BaseRichSpout
+import backtype.storm.tuple.{ Fields, Values }
+import backtype.storm.utils.Time
 import java.util.{ Map => JMap }
 import java.util.concurrent.LinkedBlockingQueue
 import twitter4j._
@@ -35,16 +39,17 @@ object TwitterSpout {
   def apply(
     factory: TwitterStreamFactory,
     limit: Int = QUEUE_LIMIT,
-    fieldName: String = FIELD_NAME): TwitterSpout =
-    new TwitterSpout(factory, limit, fieldName)
+    fieldName: String = FIELD_NAME): TwitterSpout[Status] =
+    new TwitterSpout(factory, limit, fieldName)(i => Some(i))
 }
 
-class TwitterSpout(factory: TwitterStreamFactory, limit: Int, override val fieldName: String)
-    extends BaseSpout[Status] {
+class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: String)(fn: Status => TraversableOnce[T])
+    extends BaseRichSpout with Spout[T] {
+
+  var stream: TwitterStream = null
+  var collector: SpoutOutputCollector = null
 
   lazy val queue = new LinkedBlockingQueue[Status](limit)
-  var stream: TwitterStream = null
-
   lazy val listener = new StatusListener {
     def onStatus(status: Status) {
       queue.offer(status)
@@ -56,15 +61,38 @@ class TwitterSpout(factory: TwitterStreamFactory, limit: Int, override val field
     def onException(ex: Exception) { }
   }
 
+  override def getSpout = this
+
+  override def declareOutputFields(declarer: OutputFieldsDeclarer) {
+    declarer.declare(new Fields(fieldName))
+  }
+
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
-    super.open(conf, context, coll)
+    collector = coll
     stream = factory.getInstance
     stream.addListener(listener)
 
     // TODO: Add support beyond "sample". (GardenHose, for example.)
     stream.sample
   }
-  override def poll = Option(queue.poll)
+
+  /**
+    * Override this to change the default spout behavior if poll
+    * returns an empty list.
+    */
+  def onEmpty: Unit = Time.sleep(50)
+
+  override def nextTuple {
+    Option(queue.poll).map(fn) match {
+      case None => onEmpty
+      case Some(items) => items.foreach { item =>
+        collector.emit(new Values(item.asInstanceOf[AnyRef]))
+      }
+    }
+  }
+
+  override def flatMap[U](newFn: T => TraversableOnce[U]) =
+    new TwitterSpout(factory, limit, fieldName)(fn(_).flatMap(newFn))
 
   override def close { stream.shutdown }
 }
