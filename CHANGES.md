@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.5.1 ###
+
+* Fixed missing `open` call to `TwitterSpout`
+
 ### Version 0.5.0 ###
 
 * tormenta becomes tormenta-core

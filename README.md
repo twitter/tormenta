@@ -26,7 +26,16 @@ Now you're cooking with gas.
 
 ## Maven
 
-Current version is `0.5.0`. groupid=`"com.twitter"` artifact=`"tormenta-core_2.9.2"`.
+Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.5.1`.
+
+Current published artifacts are
+
+* `tormenta-core_2.9.2`
+* `tormenta-core_2.10`
+* `tormenta-twitter_2.9.2`
+* `tormenta-twitter_2.10`
+
+The suffix denotes the scala version.
 
 ## Authors
 

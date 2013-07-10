@@ -20,9 +20,9 @@ import backtype.storm.spout.SpoutOutputCollector
 import backtype.storm.task.TopologyContext
 import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.topology.base.BaseRichSpout
-import backtype.storm.tuple.{ Fields, Values }
+import backtype.storm.tuple.{Fields, Values}
 import backtype.storm.utils.Time
-import java.util.{ Map => JMap }
+import java.util.{Map => JMap}
 
 trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
   var collector: SpoutOutputCollector = null
