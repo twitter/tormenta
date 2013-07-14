@@ -105,6 +105,8 @@ object TormentaBuild extends Build {
     publishLocal := { }
   ).aggregate(
     tormentaCore,
+    tormentaKestrel,
+    tormentaKafka,
     tormentaTwitter
   )
 
@@ -119,13 +121,19 @@ object TormentaBuild extends Build {
   lazy val tormentaCore = module("core").settings(
     libraryDependencies ++= Seq(
       "storm" % "storm" % "0.9.0-wip9",
-      "storm" % "storm-kafka" % "0.9.0-wip6-scala292-multischeme",
-      "storm" % "storm-kestrel" % "0.9.0-wip5-multischeme",
-      "com.twitter" %% "chill" % "0.2.1"
+      "com.twitter" %% "chill" % "0.2.3"
     )
   )
 
   lazy val tormentaTwitter = module("twitter").settings(
     libraryDependencies += "org.twitter4j" % "twitter4j-stream" % "3.0.3"
+  ).dependsOn(tormentaCore % "test->test;compile->compile")
+
+  lazy val tormentaKafka = module("kafka").settings(
+    libraryDependencies += "storm" % "storm-kafka" % "0.9.0-wip6-scala292-multischeme"
+  ).dependsOn(tormentaCore % "test->test;compile->compile")
+
+  lazy val tormentaKestrel = module("kestrel").settings(
+    libraryDependencies += "storm" % "storm-kestrel" % "0.9.0-wip5-multischeme"
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 }
