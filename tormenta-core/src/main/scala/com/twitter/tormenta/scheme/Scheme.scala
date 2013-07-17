@@ -18,7 +18,6 @@ package com.twitter.tormenta.scheme
 
 import backtype.storm.tuple.{ Fields, Values }
 import backtype.storm.spout.MultiScheme
-import com.twitter.bijection.{ AbstractBijection, Bijection, ImplicitBijection }
 import java.util.{ List => JList }
 import scala.collection.JavaConverters._
 import java.io.Serializable
@@ -30,13 +29,6 @@ import java.io.Serializable
 
 object Scheme {
   val identity: Scheme[Array[Byte]] = Scheme(Some(_))
-
-  implicit def bijection[T, U](implicit bij: ImplicitBijection[T, U])
-      : Bijection[Scheme[T], Scheme[U]] =
-    new AbstractBijection[Scheme[T], Scheme[U]] {
-      def apply(scheme: Scheme[T]) = scheme.map(bij(_))
-      override def invert(scheme: Scheme[U]) = scheme.map(bij.invert(_))
-    }
 
   def apply[T](decodeFn: Array[Byte] => TraversableOnce[T]) =
     new Scheme[T] {
