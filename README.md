@@ -32,6 +32,10 @@ Current published artifacts are
 
 * `tormenta-core_2.9.2`
 * `tormenta-core_2.10`
+* `tormenta-kafka_2.9.2`
+* `tormenta-kafka_2.10`
+* `tormenta-kestrel_2.9.2`
+* `tormenta-kestrel_2.10`
 * `tormenta-twitter_2.9.2`
 * `tormenta-twitter_2.10`
 

@@ -3,6 +3,8 @@
 ### Version 0.5.1 ###
 
 * Fixed missing `open` call to `TwitterSpout`
+* Moved `KafkaSpout` to `tormenta-kafka`
+* Moved `KestrelSpout` to `tormenta-kestrel`
 
 ### Version 0.5.0 ###
 
