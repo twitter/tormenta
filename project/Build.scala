@@ -17,11 +17,11 @@ object TormentaBuild extends Build {
       logLevel in Test := Level.Info
     ) else Seq.empty[Project.Setting[_]]
 
-
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
     version := "0.5.1",
-    crossScalaVersions := Seq("2.9.2", "2.10.0"),
+    scalaVersion := "2.9.3",
+    crossScalaVersions := Seq("2.9.3", "2.10.0"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
     libraryDependencies ++= Seq(
@@ -119,10 +119,7 @@ object TormentaBuild extends Build {
   }
 
   lazy val tormentaCore = module("core").settings(
-    libraryDependencies ++= Seq(
-      "storm" % "storm" % "0.9.0-wip9",
-      "com.twitter" %% "chill" % "0.2.3"
-    )
+    libraryDependencies += "storm" % "storm" % "0.9.0-wip9"
   )
 
   lazy val tormentaTwitter = module("twitter").settings(
