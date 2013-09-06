@@ -19,6 +19,7 @@ package com.twitter.tormenta.spout;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.testing.FixedTuple;
+import backtype.storm.testing.CompletableSpout;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
@@ -30,7 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import static backtype.storm.utils.Utils.get;
 
-public class FixedTupleSpout implements IRichSpout {
+public class FixedTupleSpout implements IRichSpout, CompletableSpout {
   private static final Map<String, Integer> acked = new HashMap<String, Integer>();
   private static final Map<String, Integer> failed = new HashMap<String, Integer>();
 
@@ -103,13 +104,25 @@ public class FixedTupleSpout implements IRichSpout {
     return ackedAmt + failedAmt;
   }
 
-  public void cleanup() {
+  @Override
+  public Object exhausted_QMARK_() {
+    return getSourceTuples().size() == getCompleted();
+  }
+
+  @Override
+  public Object startup() {
+    return null;
+  }
+
+  @Override
+  public Object cleanup() {
     synchronized(acked) {
       acked.remove(_id);
     }
     synchronized(failed) {
       failed.remove(_id);
     }
+    return null;
   }
 
   public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
