@@ -17,7 +17,6 @@
 package com.twitter.tormenta.spout
 
 import backtype.storm.testing.CompletableSpout
-import backtype.storm.testing.FixedTupleSpout
 import backtype.storm.topology.IRichSpout
 import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.tuple.Fields
@@ -33,13 +32,7 @@ object TraversableSpout {
 
 class TraversableSpout[+T](items: TraversableOnce[T], fieldName: String) extends Spout[T] {
   private def wrap[T](t: T) = new Values(t.asInstanceOf[AnyRef])
-  override def getSpout =
-    new FixedTupleSpout(new ArrayList(items.map(wrap).toList.asJava)) with IRichSpout {
-      override val getComponentConfiguration = null
-      override def declareOutputFields(declarer: OutputFieldsDeclarer) {
-        declarer.declare(new Fields(fieldName))
-      }
-    }
+  override def getSpout = new FixedTupleSpout(new ArrayList(items.map(wrap).toList.asJava), fieldName)
 
   def flatMap[U](fn: T => TraversableOnce[U]) =
     new TraversableSpout(items.flatMap(fn), fieldName)
