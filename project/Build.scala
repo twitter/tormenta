@@ -32,7 +32,6 @@ object TormentaBuild extends Build {
     resolvers ++= Seq(
       Opts.resolver.sonatypeSnapshots,
       Opts.resolver.sonatypeReleases,
-      "Twitter Artifactory" at "http://artifactory.local.twitter.com/repo",
       "Clojars Repository" at "http://clojars.org/repo",
       "Conjars Repository" at "http://conjars.org/repo"
     ),
@@ -120,7 +119,7 @@ object TormentaBuild extends Build {
   }
 
   lazy val tormentaCore = module("core").settings(
-    libraryDependencies += "storm" % "storm" % "0.9.0-wip15-1.0.3"
+    libraryDependencies += "storm" % "storm" % "0.9.0-wip13"
   )
 
   lazy val tormentaTwitter = module("twitter").settings(
