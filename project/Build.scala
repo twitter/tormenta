@@ -119,7 +119,7 @@ object TormentaBuild extends Build {
   }
 
   lazy val tormentaCore = module("core").settings(
-    libraryDependencies += "storm" % "storm" % "0.9.0-wip13"
+    libraryDependencies += "storm" % "storm" % "0.9.0-wip15"
   )
 
   lazy val tormentaTwitter = module("twitter").settings(
