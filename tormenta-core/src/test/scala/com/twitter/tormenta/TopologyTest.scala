@@ -21,8 +21,10 @@ import backtype.storm.testing.{ MockedSources, TestGlobalCount, CompletableSpout
 import backtype.storm.LocalCluster
 import com.twitter.tormenta.spout.Spout
 import backtype.storm.testing.CompleteTopologyParam
+import backtype.storm.tuple.Values
 import backtype.storm.Testing
 import org.specs._
+import scala.collection.JavaConverters._
 
 class TopologyTest extends Specification {
   val spout: Spout[Int] = Spout.fromTraversable(List(1,2,3,4,5))
@@ -45,5 +47,17 @@ class TopologyTest extends Specification {
   // Testing.completeTopology(localCluster, topo)
   //
   // So use this instead:
-  Testing.completeTopology(localCluster, topo, completeTopologyParam)
+  "Complete Topology" should {
+    val localCluster = new LocalCluster
+
+    "properly complete" in {
+      val ret = Testing.completeTopology(localCluster, topo, completeTopologyParam)
+      val spoutTuples = Testing.readTuples(ret, "1")
+      spoutTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) mustEqual List(1,2,3,4,5)
+
+      val countTuples = Testing.readTuples(ret, "2")
+      countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) mustEqual List(1,2,3,4,5)
+    }
+    doLast { localCluster.shutdown() }
+  }
 }
