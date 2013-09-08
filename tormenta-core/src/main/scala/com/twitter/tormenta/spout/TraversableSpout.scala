@@ -32,7 +32,10 @@ object TraversableSpout {
 
 class TraversableSpout[+T](items: TraversableOnce[T], fieldName: String) extends Spout[T] {
   private def wrap[T](t: T) = new Values(t.asInstanceOf[AnyRef])
-  override def getSpout = new FixedTupleSpout(new ArrayList(items.map(wrap).toList.asJava), fieldName)
+
+  lazy val tupleList = new ArrayList(items.map(wrap).toList.asJava)
+
+  override def getSpout = new FixedTupleSpout(tupleList, fieldName)
 
   def flatMap[U](fn: T => TraversableOnce[U]) =
     new TraversableSpout(items.flatMap(fn), fieldName)
