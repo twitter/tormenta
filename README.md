@@ -30,7 +30,7 @@ To learn more and find links to tutorials and information around the web, check 
 
 The latest ScalaDocs are hosted on Tormenta's [Github Project Page](http://twitter.github.io/tormenta).
 
-Discussion occurs primarily on the [Tormenta mailing list](http://librelist.com/browser/tormenta/). To join the mailing list, email [tormenta@librelist.com](mailto:tormenta@librelist.com). The same address is used for posting once you've joined. Issues should be reported on the [GitHub issue tracker](https://github.com/twitter/tormenta/issues).
+Discussion occurs primarily on the [Tormenta mailing list](https://groups.google.com/forum/#!forum/tormenta). Issues should be reported on the [GitHub issue tracker](https://github.com/twitter/tormenta/issues).
 
 ## Maven
 
