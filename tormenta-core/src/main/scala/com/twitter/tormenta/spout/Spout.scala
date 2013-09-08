@@ -30,10 +30,7 @@ import java.io.Serializable
 object Spout {
   // TODO: Should this be a TravOnce[TravOnce[T]] to test multi-emit?
   def fromTraversable[T](items: TraversableOnce[T]): Spout[T] =
-    new BaseSpout[T] {
-      private val iter = items.toIterator
-      override def poll = if (iter.hasNext) Some(iter.next) else None
-    }
+    TraversableSpout(items)
 
   def fromFn[T](fn: () => TraversableOnce[T]): Spout[T] =
     new BaseSpout[T] {
