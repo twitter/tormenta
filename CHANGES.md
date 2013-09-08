@@ -1,5 +1,11 @@
 # tormenta #
 
+### Version 0.5.2 ###
+
+* Break out `tormenta-kestrel` and `tormenta-kafka`: https://github.com/twitter/tormenta/pull/31
+* Add mailing list to README: https://github.com/twitter/tormenta/pull/34
+* Add proper `TraversableSpout` (usable within topologies) and first test: https://github.com/twitter/tormenta/pull/35
+
 ### Version 0.5.1 ###
 
 * Fixed missing `open` call to `TwitterSpout`
