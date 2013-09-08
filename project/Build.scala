@@ -19,7 +19,7 @@ object TormentaBuild extends Build {
 
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
-    version := "0.5.1",
+    version := "0.5.2-SNAPSHOT",
     scalaVersion := "2.9.3",
     crossScalaVersions := Seq("2.9.3", "2.10.0"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
@@ -119,7 +119,7 @@ object TormentaBuild extends Build {
   }
 
   lazy val tormentaCore = module("core").settings(
-    libraryDependencies += "storm" % "storm" % "0.9.0-wip9"
+    libraryDependencies += "storm" % "storm" % "0.9.0-wip15"
   )
 
   lazy val tormentaTwitter = module("twitter").settings(
