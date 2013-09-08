@@ -38,5 +38,5 @@ class TraversableSpout[+T](items: TraversableOnce[T], fieldName: String) extends
   override def getSpout = new FixedTupleSpout(tupleList, fieldName)
 
   def flatMap[U](fn: T => TraversableOnce[U]) =
-    new TraversableSpout(items.flatMap(fn), fieldName)
+    new TraversableSpout(tupleList.flatMap(fn), fieldName)
 }
