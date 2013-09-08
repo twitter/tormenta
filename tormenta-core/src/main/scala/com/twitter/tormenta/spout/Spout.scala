@@ -17,7 +17,6 @@
 package com.twitter.tormenta.spout
 
 import backtype.storm.topology.IRichSpout
-import com.twitter.bijection.{ AbstractBijection, Bijection, ImplicitBijection }
 
 import java.io.Serializable
 
@@ -29,19 +28,9 @@ import java.io.Serializable
   */
 
 object Spout {
-  implicit def bijection[T, U](implicit bij: ImplicitBijection[T, U])
-      : Bijection[Spout[T], Spout[U]] =
-    new AbstractBijection[Spout[T], Spout[U]] {
-      def apply(spout: Spout[T]) = spout.map(bij(_))
-      override def invert(spout: Spout[U]) = spout.map(bij.invert(_))
-    }
-
   // TODO: Should this be a TravOnce[TravOnce[T]] to test multi-emit?
   def fromTraversable[T](items: TraversableOnce[T]): Spout[T] =
-    new BaseSpout[T] {
-      private val iter = items.toIterator
-      override def poll = if (iter.hasNext) Some(iter.next) else None
-    }
+    TraversableSpout(items)
 
   def fromFn[T](fn: () => TraversableOnce[T]): Spout[T] =
     new BaseSpout[T] {

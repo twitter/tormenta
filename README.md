@@ -24,15 +24,27 @@ topologyBuilder.setSpout("spoutName", spout.getSpout, 10)
 
 Now you're cooking with gas.
 
+## Community and Documentation
+
+To learn more and find links to tutorials and information around the web, check out the [Tormenta Wiki](https://github.com/twitter/tormenta/wiki).
+
+The latest ScalaDocs are hosted on Tormenta's [Github Project Page](http://twitter.github.io/tormenta).
+
+Discussion occurs primarily on the [Tormenta mailing list](https://groups.google.com/forum/#!forum/tormenta-user). Issues should be reported on the [GitHub issue tracker](https://github.com/twitter/tormenta/issues).
+
 ## Maven
 
-Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.5.1`.
+Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.5.2`.
 
 Current published artifacts are
 
-* `tormenta-core_2.9.2`
+* `tormenta-core_2.9.3`
 * `tormenta-core_2.10`
-* `tormenta-twitter_2.9.2`
+* `tormenta-kafka_2.9.3`
+* `tormenta-kafka_2.10`
+* `tormenta-kestrel_2.9.3`
+* `tormenta-kestrel_2.10`
+* `tormenta-twitter_2.9.3`
 * `tormenta-twitter_2.10`
 
 The suffix denotes the scala version.
