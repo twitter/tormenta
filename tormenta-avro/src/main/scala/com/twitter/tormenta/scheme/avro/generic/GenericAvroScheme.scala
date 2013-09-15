@@ -31,7 +31,7 @@ object GenericAvroScheme {
   def apply[T <: GenericRecord](schema: Schema) = new GenericAvroScheme[T](schema)
 }
 
-class GenericAvroScheme[T <: GenericRecord](schema: Schema) extends AvroScheme[T] with Scheme[T] {
+class GenericAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
     implicit val inj = AvroCodecs[T](schema)
     decodeRecord(bytes)
@@ -42,7 +42,7 @@ object BinaryAvroScheme {
   def apply[T <: GenericRecord](schema: Schema) = new BinaryAvroScheme[T](schema)
 }
 
-class BinaryAvroScheme[T <: GenericRecord](schema: Schema) extends AvroScheme[T] with Scheme[T] {
+class BinaryAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
     implicit val inj = AvroCodecs.toBinary[T](schema)
     decodeRecord(bytes)
@@ -53,7 +53,7 @@ object JsonAvroScheme {
   def apply[T <: GenericRecord](schema: Schema) = new JsonAvroScheme[T](schema)
 }
 
-class JsonAvroScheme[T <: GenericRecord](schema: Schema) extends AvroScheme[T] with Scheme[T] {
+class JsonAvroScheme[T <: GenericRecord](schema: Schema)extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
     implicit val avroInj = AvroCodecs.toJson[T](schema)
     implicit val inj = connect[T, String, Array[Byte]]
