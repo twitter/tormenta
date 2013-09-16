@@ -107,7 +107,8 @@ object TormentaBuild extends Build {
     tormentaCore,
     tormentaKestrel,
     tormentaKafka,
-    tormentaTwitter
+    tormentaTwitter,
+    tormentaAvro
   )
 
   def module(name: String) = {
@@ -132,5 +133,12 @@ object TormentaBuild extends Build {
 
   lazy val tormentaKestrel = module("kestrel").settings(
     libraryDependencies += "storm" % "storm-kestrel" % "0.9.0-wip5-multischeme"
+  ).dependsOn(tormentaCore % "test->test;compile->compile")
+
+  lazy val tormentaAvro = module("avro").settings(
+    libraryDependencies ++= Seq(
+      "org.apache.avro" % "avro" % "1.7.4",
+      "com.twitter" %% "bijection-core" % "0.5.3",
+      "com.twitter" %% "bijection-avro" % "0.5.3")
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 }
