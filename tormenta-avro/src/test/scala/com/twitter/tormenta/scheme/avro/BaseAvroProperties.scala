@@ -22,6 +22,8 @@ import scala.math.Equiv
 import org.scalacheck.Prop._
 import org.apache.avro.generic.GenericRecord
 import org.apache.avro.specific.SpecificRecordBase
+import scala.collection.JavaConverters._
+import com.twitter.tormenta.scheme.Scheme
 
 /**
  * @author Mansur Ashraf
@@ -44,21 +46,22 @@ trait BaseAvroProperties {
       }
     }
 
-  def isAvroRecordDecoded[A](implicit arba: Arbitrary[A], scheme: AvroScheme[A],
+  def isAvroRecordDecoded[A](implicit arba: Arbitrary[A], scheme: Scheme[A],
                              inj: Injection[A, Array[Byte]], eqa: Equiv[A]) =
     forAll {
       (a: A) =>
         val b = inj(a)
-        val avroRecord = scheme.decode(b)
-        !avroRecord.isEmpty && avroRecord.size == 1 && eqa.equiv(avroRecord.toList.head, a)
+        val deserialize = scheme.deserialize(b)
+        val c = deserialize.asScala
+        !c.isEmpty && c.size == 1 && eqa.equiv(c.head.get(0).asInstanceOf[A], a)
     }
 
-  def isAvroRecordNotDecoded[A](implicit arba: Arbitrary[A], scheme: AvroScheme[A],
-                                inj: Injection[A, Array[Byte]]) =
+  def isAvroRecordNotDecoded[A](implicit arba: Arbitrary[A], scheme: Scheme[A],
+                                failedRecord: A, inj: Injection[A, Array[Byte]], eqa: Equiv[A]) =
     forAll {
       (a: A) =>
         val b = inj(a)
-        val c = scheme.decode(b)
-        c.isEmpty
+        val c = scheme.deserialize(b).asScala
+        !c.isEmpty && c.size == 1 && eqa.equiv(c.head.get(0).asInstanceOf[A], failedRecord)
     }
 }

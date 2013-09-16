@@ -28,6 +28,6 @@ trait AvroScheme[T] extends Scheme[T] {
 
   def decodeRecord(bytes: Array[Byte])(implicit inj: Injection[T, Array[Byte]]): TraversableOnce[T] = Injection.invert[T, Array[Byte]](bytes) match {
     case Success(x) => Seq(x)
-    case Failure(x) => handle(x)
+    case Failure(x) => throw x
   }
 }

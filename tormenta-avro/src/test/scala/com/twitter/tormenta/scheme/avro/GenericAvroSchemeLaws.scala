@@ -23,6 +23,7 @@ import com.twitter.bijection.Injection
 import com.twitter.bijection.avro.AvroCodecs
 import com.twitter.tormenta.scheme.avro.generic.{JsonAvroScheme, BinaryAvroScheme, GenericAvroScheme}
 import com.twitter.bijection.Injection._
+import com.twitter.tormenta.scheme.Scheme
 
 /**
  * @author Mansur Ashraf
@@ -70,17 +71,13 @@ object GenericAvroSchemeLaws extends Properties("GenericAvroScheme") with BaseAv
 
   implicit val failedGenericRecord = buildGenericAvroRecord("failed", -99, -99)
 
-  def roundTripsGenericRecord(implicit injection: Injection[GenericRecord, Array[Byte]], scheme: AvroScheme[GenericRecord]) = {
+  def roundTripsGenericRecord[S <: Scheme[GenericRecord]](implicit injection: Injection[GenericRecord, Array[Byte]], scheme: S) = {
     isAvroRecordDecoded[GenericRecord]
   }
 
-  def simulateGenericRecordFailure(implicit injection: Injection[GenericRecord, Array[Byte]], scheme: AvroScheme[GenericRecord], failedRecord: GenericRecord) = {
+  def simulateGenericRecordFailure[S <: Scheme[GenericRecord]](implicit injection: Injection[GenericRecord, Array[Byte]], scheme:S, failedRecord: GenericRecord) = {
     isAvroRecordNotDecoded[GenericRecord]
   }
-
-  /* def roundTripsSpecificRecord(implicit injection: Injection[SpecificRecordBase, Array[Byte]], scheme: AvroScheme[SpecificRecordBase]) = {
-     isAvroRecordDecoded[SpecificRecordBase]
-   }*/
 
   property("round trips Generic Record using Generic Avro Scheme") = {
     implicit val inj = AvroCodecs[GenericRecord](testSchema)
@@ -104,18 +101,18 @@ object GenericAvroSchemeLaws extends Properties("GenericAvroScheme") with BaseAv
   property("Simulates Generic Avro Scheme failure") = {
     implicit val jinj = AvroCodecs.toJson[GenericRecord](testSchema) //passing wrong injection to produce incorrect bytes
     implicit val inj = connect[GenericRecord, String, Array[Byte]]
-    implicit val scheme = BinaryAvroScheme[GenericRecord](testSchema)
+    implicit val scheme = BinaryAvroScheme[GenericRecord](testSchema).withHandler(t=>List(failedGenericRecord))
     simulateGenericRecordFailure
   }
 
     property("simulate Binary Avro Scheme") = {
       implicit val inj = AvroCodecs[GenericRecord](testSchema)   //passing wrong injection to produce incorrect bytes
-      implicit val scheme = BinaryAvroScheme[GenericRecord](testSchema)
+      implicit val scheme = BinaryAvroScheme[GenericRecord](testSchema).withHandler(t=>List(failedGenericRecord))
       simulateGenericRecordFailure
     }
 
     property("round trips Generic Record using Json Avro Scheme") = {
-      implicit val scheme = JsonAvroScheme[GenericRecord](testSchema)
+      implicit val scheme = JsonAvroScheme[GenericRecord](testSchema).withHandler(t=>List(failedGenericRecord))
       implicit val inj = AvroCodecs[GenericRecord](testSchema)     //passing wrong injection to produce incorrect bytes
       simulateGenericRecordFailure
     }
