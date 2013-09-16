@@ -16,13 +16,6 @@
 
 package com.twitter.tormenta.scheme
 
-import backtype.storm.topology.TopologyBuilder
-import backtype.storm.testing.{ MockedSources, TestGlobalCount, CompletableSpout }
-import backtype.storm.LocalCluster
-import com.twitter.tormenta.spout.Spout
-import backtype.storm.testing.CompleteTopologyParam
-import backtype.storm.tuple.Values
-import backtype.storm.Testing
 import org.specs._
 import scala.collection.JavaConverters._
 
