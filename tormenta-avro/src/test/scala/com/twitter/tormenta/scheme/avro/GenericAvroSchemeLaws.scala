@@ -75,7 +75,7 @@ object GenericAvroSchemeLaws extends Properties("GenericAvroScheme") with BaseAv
     isAvroRecordDecoded[GenericRecord]
   }
 
-  def simulateGenericRecordFailure[S <: Scheme[GenericRecord]](implicit injection: Injection[GenericRecord, Array[Byte]], scheme:S, failedRecord: GenericRecord) = {
+  def simulateGenericRecordFailure[S <: Scheme[GenericRecord]](implicit injection: Injection[GenericRecord, Array[Byte]], scheme:S) = {
     isAvroRecordNotDecoded[GenericRecord]
   }
 
