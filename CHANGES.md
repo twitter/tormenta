@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.5.3 ###
+
+* Add `tormenta-avro` module: https://github.com/twitter/tormenta/pull/36
+
 ### Version 0.5.2 ###
 
 * Break out `tormenta-kestrel` and `tormenta-kafka`: https://github.com/twitter/tormenta/pull/31

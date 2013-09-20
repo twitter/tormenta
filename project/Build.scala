@@ -19,7 +19,7 @@ object TormentaBuild extends Build {
 
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
-    version := "0.5.2",
+    version := "0.5.3",
     scalaVersion := "2.9.3",
     crossScalaVersions := Seq("2.9.3", "2.10.0"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
@@ -107,7 +107,8 @@ object TormentaBuild extends Build {
     tormentaCore,
     tormentaKestrel,
     tormentaKafka,
-    tormentaTwitter
+    tormentaTwitter,
+    tormentaAvro
   )
 
   def module(name: String) = {
@@ -132,5 +133,12 @@ object TormentaBuild extends Build {
 
   lazy val tormentaKestrel = module("kestrel").settings(
     libraryDependencies += "storm" % "storm-kestrel" % "0.9.0-wip5-multischeme"
+  ).dependsOn(tormentaCore % "test->test;compile->compile")
+
+  lazy val tormentaAvro = module("avro").settings(
+    libraryDependencies ++= Seq(
+      "org.apache.avro" % "avro" % "1.7.4",
+      "com.twitter" %% "bijection-core" % "0.5.3",
+      "com.twitter" %% "bijection-avro" % "0.5.3")
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 }
