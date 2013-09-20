@@ -36,7 +36,7 @@ object TormentaBuild extends Build {
       "Conjars Repository" at "http://conjars.org/repo"
     ),
 
-    parallelExecution in Test := true,
+    parallelExecution in Test := false,
 
     scalacOptions ++= Seq(Opts.compile.unchecked, Opts.compile.deprecation),
 
