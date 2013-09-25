@@ -24,46 +24,13 @@ import com.twitter.bijection.avro.AvroCodecs
 import com.twitter.tormenta.scheme.avro.generic.{JsonAvroScheme, BinaryAvroScheme, GenericAvroScheme}
 import com.twitter.bijection.Injection._
 import com.twitter.tormenta.scheme.Scheme
+import com.twitter.tormenta.AvroTestHelper
 
 /**
  * @author Mansur Ashraf
  * @since 9/14/13
  */
-object GenericAvroSchemeLaws extends Properties("GenericAvroScheme") with BaseAvroProperties {
-  val testSchema = new Schema.Parser().parse( """{
-                                                   "type":"record",
-                                                   "name":"FiscalRecord",
-                                                   "namespace":"avro",
-                                                   "fields":[
-                                                      {
-                                                         "name":"calendarDate",
-                                                         "type":"string"
-                                                      },
-                                                      {
-                                                         "name":"fiscalWeek",
-                                                         "type":[
-                                                            "int",
-                                                            "null"
-                                                         ]
-                                                      },
-                                                      {
-                                                         "name":"fiscalYear",
-                                                         "type":[
-                                                            "int",
-                                                            "null"
-                                                         ]
-                                                      }
-                                                   ]
-                                                }""")
-
-
-  def buildGenericAvroRecord(i: (String, Int, Int)): GenericRecord = {
-    val fiscalRecord = new GenericData.Record(testSchema)
-    fiscalRecord.put("calendarDate", i._1)
-    fiscalRecord.put("fiscalWeek", i._2)
-    fiscalRecord.put("fiscalYear", i._3)
-    fiscalRecord
-  }
+object GenericAvroSchemeLaws extends Properties("GenericAvroScheme") with BaseAvroProperties with AvroTestHelper {
 
   implicit val testGenericRecord = arbitraryViaFn {
     is: (String, Int, Int) => buildGenericAvroRecord(is)
