@@ -26,7 +26,7 @@ import backtype.storm.Testing
 import org.specs._
 import scala.collection.JavaConverters._
 
-class TopologyTest extends Specification {
+object TopologyTest extends Specification {
   val spout: Spout[Int] = Spout.fromTraversable(List(1,2,3,4,5))
 
   val builder = new TopologyBuilder
