@@ -1,10 +1,25 @@
+/*
+ * Copyright 2013 Twitter inc.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.twitter.tormenta.scheme.spout
 
 import org.specs.Specification
 import com.twitter.tormenta.AvroTestHelper
 import com.twitter.bijection.avro.AvroCodecs
-import com.twitter.tormenta.spout.avro.SpecificRecordTraversableSpout
-import com.twitter.tormenta.spout.Spout
+import com.twitter.tormenta.spout.{TraversableSpout, Spout}
 import backtype.storm.topology.TopologyBuilder
 import backtype.storm.{Testing, LocalCluster}
 import backtype.storm.testing.{TestGlobalCount, MockedSources, CompleteTopologyParam}
@@ -19,7 +34,7 @@ import scala.collection.JavaConverters._
 object SpecificRecordTopologyTest extends Specification with AvroTestHelper {
   val inj = AvroCodecs[FiscalRecord]
 
-  val specificSpout: Spout[Array[Byte]] = SpecificRecordTraversableSpout(List(
+  val specificSpout: Spout[Array[Byte]] = TraversableSpout[FiscalRecord](List(
     buildSpecificAvroRecord("2010-01-01", 1, 1),
     buildSpecificAvroRecord("2010-02-02", 2, 2),
     buildSpecificAvroRecord("2010-04-03", 3, 3),
