@@ -3,8 +3,11 @@
 Scala extensions for the [Storm](https://github.com/nathanmarz/storm) distributed computation system. Tormenta adds a type-safe wrapper over Storm's Kafka and Kestrel spouts. This type safety allows the user to push mapping and filtering transformations down to the level of the spout itself:
 
 ```scala
+import com.twitter.tormenta.scheme._
+import com.twitter.tormenta.spout._
+
 // produces strings:
-val scheme: Scheme[String] = new StringScheme
+val scheme: Scheme[String] = Scheme { bytes => Some(new String(bytes)) }
 
 // produces integers w/ string length:
 val mappedScheme: Scheme[Int] = scheme.map(_.length)
