@@ -16,6 +16,7 @@
 
 package com.twitter.tormenta.spout
 
+import backtype.storm.task.TopologyContext
 import backtype.storm.topology.IRichSpout
 
 import java.io.Serializable
@@ -38,8 +39,10 @@ object Spout {
     }
 }
 
-trait Spout[+T] extends Serializable {
+trait Spout[+T] extends Serializable { self =>
   def getSpout: IRichSpout
+
+  def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) = self
 
   def flatMap[U](fn: T => TraversableOnce[U]): Spout[U]
 
