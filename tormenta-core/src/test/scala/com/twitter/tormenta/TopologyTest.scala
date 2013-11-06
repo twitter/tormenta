@@ -26,7 +26,7 @@ import backtype.storm.Testing
 import org.specs._
 import scala.collection.JavaConverters._
 
-class TopologyTest extends Specification {
+object TopologyTest extends Specification {
   val spout: Spout[Int] = Spout.fromTraversable(List(1,2,3,4,5))
 
   val builder = new TopologyBuilder
@@ -58,6 +58,9 @@ class TopologyTest extends Specification {
       val countTuples = Testing.readTuples(ret, "2")
       countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) mustEqual List(1,2,3,4,5)
     }
-    doLast { localCluster.shutdown() }
+    doLast {
+      Thread.sleep(1500) // Dealing with race condition until storm bugfix.
+      localCluster.shutdown()
+    }
   }
 }

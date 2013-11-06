@@ -25,46 +25,13 @@ import avro.FiscalRecord
 import com.twitter.tormenta.scheme.avro.specific.{JsonAvroScheme, BinaryAvroScheme, SpecificAvroScheme}
 import org.apache.avro.Schema
 import com.twitter.tormenta.scheme.Scheme
+import com.twitter.tormenta.AvroTestHelper
 
 /**
  * @author Mansur Ashraf
  * @since 9/15/13
  */
-object SpecificAvroSchemeLaws extends Properties("SpecificAvroScheme") with BaseAvroProperties {
-
-  val testSchema = new Schema.Parser().parse( """{
-                                                   "type":"record",
-                                                   "name":"FiscalRecord",
-                                                   "namespace":"avro",
-                                                   "fields":[
-                                                      {
-                                                         "name":"calendarDate",
-                                                         "type":"string"
-                                                      },
-                                                      {
-                                                         "name":"fiscalWeek",
-                                                         "type":[
-                                                            "int",
-                                                            "null"
-                                                         ]
-                                                      },
-                                                      {
-                                                         "name":"fiscalYear",
-                                                         "type":[
-                                                            "int",
-                                                            "null"
-                                                         ]
-                                                      }
-                                                   ]
-                                                }""")
-
-  def buildSpecificAvroRecord(i: (String, Int, Int)): FiscalRecord = {
-    FiscalRecord.newBuilder()
-      .setCalendarDate(i._1)
-      .setFiscalWeek(i._2)
-      .setFiscalYear(i._3)
-      .build()
-  }
+object SpecificAvroSchemeLaws extends Properties("SpecificAvroScheme") with BaseAvroProperties with AvroTestHelper {
 
   implicit val testSpecificRecord = arbitraryViaFn {
     is: (String, Int, Int) => buildSpecificAvroRecord(is)
