@@ -1,5 +1,13 @@
 # tormenta #
 
+### Version 0.5.4 ###
+* Add Scheme "withHandler" Test: https://github.com/twitter/tormenta/pull/38
+* Fixes Implicit resolution in GenericAvroSchemeLaws: https://github.com/twitter/tormenta/pull/40
+* Changed TopologyTest to object from class: https://github.com/twitter/tormenta/pull/42
+* Adds AvroTraversableSpouts for testing Avro Record with SummingBird: https://github.com/twitter/tormenta/pull/43
+* Spout metrics: https://github.com/twitter/tormenta/pull/46
+* Move to sbt 0.13: https://github.com/twitter/tormenta/pull/45
+
 ### Version 0.5.3 ###
 
 * Add `tormenta-avro` module: https://github.com/twitter/tormenta/pull/36
