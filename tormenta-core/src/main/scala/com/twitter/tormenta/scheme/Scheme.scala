@@ -21,6 +21,7 @@ import backtype.storm.spout.MultiScheme
 import java.util.{ List => JList }
 import scala.collection.JavaConverters._
 import java.io.Serializable
+import org.slf4j.LoggerFactory
 
 /**
  *  @author Oscar Boykin
@@ -42,7 +43,13 @@ trait Scheme[+T] extends MultiScheme with Serializable { self =>
     */
   def decode(bytes: Array[Byte]): TraversableOnce[T]
 
-  def handle(t: Throwable): TraversableOnce[T] = List.empty
+  def handle(t: Throwable): TraversableOnce[T] = {
+    // We assume this is rare enough that the perf hit of
+    // getLogger+getClass is better than
+    // forcing a new variable on everyone, even those that override this
+    LoggerFactory.getLogger(getClass).error("decoding error, ignoring", t)
+    List.empty
+  }
 
   def withHandler[U >: T](fn: Throwable => TraversableOnce[U]): Scheme[U] =
     new Scheme[U] {

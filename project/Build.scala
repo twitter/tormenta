@@ -6,6 +6,10 @@ import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
 import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
 
 object TormentaBuild extends Build {
+
+  lazy val slf4jVersion = "1.6.6"
+  lazy val stormVersion = "0.9.0-wip15"
+
   val extraSettings =
     Project.defaultSettings ++ mimaDefaultSettings
 
@@ -25,6 +29,8 @@ object TormentaBuild extends Build {
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
     libraryDependencies ++= Seq(
+      "org.slf4j" % "slf4j-api" % slf4jVersion,
+      "storm" % "storm" % stormVersion % "provided",
       "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
       "org.scala-tools.testing" %% "specs" % "1.6.9" % "test"
     ),
@@ -119,9 +125,7 @@ object TormentaBuild extends Build {
     )
   }
 
-  lazy val tormentaCore = module("core").settings(
-    libraryDependencies += "storm" % "storm" % "0.9.0-wip15"
-  )
+  lazy val tormentaCore = module("core")
 
   lazy val tormentaTwitter = module("twitter").settings(
     libraryDependencies += "org.twitter4j" % "twitter4j-stream" % "3.0.3"
