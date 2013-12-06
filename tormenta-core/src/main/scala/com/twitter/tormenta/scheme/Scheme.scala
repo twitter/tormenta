@@ -22,6 +22,7 @@ import java.util.{ List => JList }
 import scala.collection.JavaConverters._
 import java.io.Serializable
 import org.slf4j.LoggerFactory
+import scala.util.{Try, Failure}
 
 /**
  *  @author Oscar Boykin
@@ -43,15 +44,15 @@ trait Scheme[+T] extends MultiScheme with Serializable { self =>
     */
   def decode(bytes: Array[Byte]): TraversableOnce[T]
 
-  def handle(t: Throwable): TraversableOnce[T] = {
+  def handle(t: Throwable): Try[TraversableOnce[T]] = {
     // We assume this is rare enough that the perf hit of
     // getLogger+getClass is better than
     // forcing a new variable on everyone, even those that override this
-    LoggerFactory.getLogger(getClass).error("decoding error, ignoring", t)
-    List.empty
+    LoggerFactory.getLogger(getClass).error("decoding error, rethrowing for storm to handle", t)
+    Failure(t)
   }
 
-  def withHandler[U >: T](fn: Throwable => TraversableOnce[U]): Scheme[U] =
+  def withHandler[U >: T](fn: Throwable => Try[TraversableOnce[U]]): Scheme[U] =
     new Scheme[U] {
       override def handle(t: Throwable) = fn(t)
       override def decode(bytes: Array[Byte]) = self.decode(bytes)
@@ -77,7 +78,7 @@ trait Scheme[+T] extends MultiScheme with Serializable { self =>
     try {
       toJava(decode(bytes))
     } catch {
-      case t: Throwable => toJava(handle(t))
+      case t: Throwable => toJava(handle(t).get)
     }
 
   override lazy val getOutputFields = new Fields("summingEvent")
