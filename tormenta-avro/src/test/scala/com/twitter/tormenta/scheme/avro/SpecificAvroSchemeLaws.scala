@@ -26,6 +26,7 @@ import com.twitter.tormenta.scheme.avro.specific.{JsonAvroScheme, BinaryAvroSche
 import org.apache.avro.Schema
 import com.twitter.tormenta.scheme.Scheme
 import com.twitter.tormenta.AvroTestHelper
+import scala.util.Success
 
 /**
  * @author Mansur Ashraf
@@ -69,18 +70,18 @@ object SpecificAvroSchemeLaws extends Properties("SpecificAvroScheme") with Base
   property("Simulates Specific Avro Scheme failure") = {
     implicit val jinj = AvroCodecs.toJson[FiscalRecord](testSchema) //passing wrong injection to produce incorrect bytes
     implicit val inj = connect[FiscalRecord, String, Array[Byte]]
-    implicit val scheme = BinaryAvroScheme[FiscalRecord].withHandler(t=>List(failedGenericRecord))
+    implicit val scheme = BinaryAvroScheme[FiscalRecord].withHandler(t=>Success(List(failedGenericRecord)))
     simulateSpecificRecordFailure
   }
 
   property("simulate Binary Avro Scheme") = {
     implicit val inj = AvroCodecs[FiscalRecord] //passing wrong injection to produce incorrect bytes
-    implicit val scheme = BinaryAvroScheme[FiscalRecord].withHandler(t=>List(failedGenericRecord))
+    implicit val scheme = BinaryAvroScheme[FiscalRecord].withHandler(t=>Success(List(failedGenericRecord)))
     simulateSpecificRecordFailure
   }
 
   property("round trips Specific Record using Json Avro Scheme") = {
-    implicit val scheme = JsonAvroScheme[FiscalRecord](testSchema).withHandler(t=>List(failedGenericRecord))
+    implicit val scheme = JsonAvroScheme[FiscalRecord](testSchema).withHandler(t=>Success(List(failedGenericRecord)))
     implicit val inj = AvroCodecs[FiscalRecord] //passing wrong injection to produce incorrect bytes
     simulateSpecificRecordFailure
   }
