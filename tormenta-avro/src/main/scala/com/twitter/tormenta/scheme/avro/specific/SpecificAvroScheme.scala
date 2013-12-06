@@ -19,7 +19,7 @@ package com.twitter.tormenta.scheme.avro.specific
 import org.apache.avro.Schema
 import com.twitter.tormenta.scheme.avro.AvroScheme
 import com.twitter.tormenta.scheme.Scheme
-import com.twitter.bijection.avro.AvroCodecs
+import com.twitter.bijection.avro.SpecificAvroCodecs
 import com.twitter.bijection.Injection._
 import org.apache.avro.specific.SpecificRecordBase
 
@@ -33,7 +33,7 @@ object SpecificAvroScheme {
 
 class SpecificAvroScheme[T <: SpecificRecordBase : Manifest] extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
-    implicit val inj = AvroCodecs[T]
+    implicit val inj = SpecificAvroCodecs[T]
     decodeRecord(bytes)
   }
 }
@@ -44,7 +44,7 @@ object BinaryAvroScheme {
 
 class BinaryAvroScheme[T <: SpecificRecordBase : Manifest] extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
-    implicit val inj = AvroCodecs.toBinary[T]
+    implicit val inj = SpecificAvroCodecs.toBinary[T]
     decodeRecord(bytes)
   }
 }
@@ -55,7 +55,7 @@ object JsonAvroScheme {
 
 class JsonAvroScheme[T <: SpecificRecordBase : Manifest](schema: Schema) extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
-    implicit val avroInj = AvroCodecs.toJson[T](schema)
+    implicit val avroInj = SpecificAvroCodecs.toJson[T](schema)
     implicit val inj = connect[T, String, Array[Byte]]
     decodeRecord(bytes)
   }

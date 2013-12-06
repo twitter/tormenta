@@ -18,7 +18,7 @@ package com.twitter.tormenta.scheme.spout
 
 import org.specs.Specification
 import com.twitter.tormenta.AvroTestHelper
-import com.twitter.bijection.avro.AvroCodecs
+import com.twitter.bijection.avro.SpecificAvroCodecs
 import com.twitter.tormenta.spout.{TraversableSpout, Spout}
 import backtype.storm.topology.TopologyBuilder
 import backtype.storm.{Testing, LocalCluster}
@@ -32,7 +32,7 @@ import scala.collection.JavaConverters._
  * @since 9/25/13
  */
 object SpecificRecordTopologyTest extends Specification with AvroTestHelper {
-  val inj = AvroCodecs[FiscalRecord]
+  val inj = SpecificAvroCodecs[FiscalRecord]
 
   val specificSpout: Spout[Array[Byte]] = TraversableSpout[FiscalRecord](List(
     buildSpecificAvroRecord("2010-01-01", 1, 1),
