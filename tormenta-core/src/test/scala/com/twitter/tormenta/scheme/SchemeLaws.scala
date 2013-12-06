@@ -18,13 +18,14 @@ package com.twitter.tormenta.scheme
 
 import org.specs._
 import scala.collection.JavaConverters._
+import scala.util.Success
 
 object SchemeWithHandlerSpecification extends Specification {
   "Scheme should handle failure" should {
     "test failure" in {
       val f: Array[Byte] => List[String] = b => throw new IllegalArgumentException("decode failed")
 
-      val schemeWithErrorHandler = Scheme(f).withHandler(t => List(t.getMessage))
+      val schemeWithErrorHandler = Scheme(f).withHandler(t => Success(List(t.getMessage)))
       val result = schemeWithErrorHandler.deserialize("test string".getBytes("UTF-8"))
 
       result.asScala.isEmpty mustBe false   //test fails, returns an empty list

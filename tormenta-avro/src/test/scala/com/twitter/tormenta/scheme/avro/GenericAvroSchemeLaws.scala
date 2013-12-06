@@ -25,6 +25,7 @@ import com.twitter.tormenta.scheme.avro.generic.{JsonAvroScheme, BinaryAvroSchem
 import com.twitter.bijection.Injection._
 import com.twitter.tormenta.scheme.Scheme
 import com.twitter.tormenta.AvroTestHelper
+import scala.util.{Success, Failure}
 
 /**
  * @author Mansur Ashraf
@@ -68,18 +69,18 @@ object GenericAvroSchemeLaws extends Properties("GenericAvroScheme") with BaseAv
   property("Simulates Generic Avro Scheme failure") = {
     implicit val jinj = AvroCodecs.toJson[GenericRecord](testSchema) //passing wrong injection to produce incorrect bytes
     implicit val inj = connect[GenericRecord, String, Array[Byte]]
-    implicit val scheme = BinaryAvroScheme[GenericRecord](testSchema).withHandler(t=>List(failedGenericRecord))
+    implicit val scheme = BinaryAvroScheme[GenericRecord](testSchema).withHandler(t=> Success(List(failedGenericRecord)))
     simulateGenericRecordFailure
   }
 
     property("simulate Binary Avro Scheme") = {
       implicit val inj = AvroCodecs[GenericRecord](testSchema)   //passing wrong injection to produce incorrect bytes
-      implicit val scheme = BinaryAvroScheme[GenericRecord](testSchema).withHandler(t=>List(failedGenericRecord))
+      implicit val scheme = BinaryAvroScheme[GenericRecord](testSchema).withHandler(t=> Success(List(failedGenericRecord)))
       simulateGenericRecordFailure
     }
 
     property("round trips Generic Record using Json Avro Scheme") = {
-      implicit val scheme = JsonAvroScheme[GenericRecord](testSchema).withHandler(t=>List(failedGenericRecord))
+      implicit val scheme = JsonAvroScheme[GenericRecord](testSchema).withHandler(t=> Success(List(failedGenericRecord)))
       implicit val inj = AvroCodecs[GenericRecord](testSchema)     //passing wrong injection to produce incorrect bytes
       simulateGenericRecordFailure
     }
