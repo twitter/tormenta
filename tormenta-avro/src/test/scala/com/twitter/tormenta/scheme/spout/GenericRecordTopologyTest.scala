@@ -27,7 +27,7 @@ import backtype.storm.Testing
 import org.specs._
 import scala.collection.JavaConverters._
 import com.twitter.tormenta.AvroTestHelper
-import com.twitter.bijection.avro.AvroCodecs
+import com.twitter.bijection.avro.GenericAvroCodecs
 import org.apache.avro.generic.GenericRecord
 
 /**
@@ -36,7 +36,7 @@ import org.apache.avro.generic.GenericRecord
  */
 
 object GenericRecordTopologyTest extends Specification with AvroTestHelper {
-  val inj = AvroCodecs[GenericRecord](testSchema)
+  val inj = GenericAvroCodecs[GenericRecord](testSchema)
 
   val genericSpout = TraversableSpout[GenericRecord](List(
     buildGenericAvroRecord("2010-01-01", 1, 1),

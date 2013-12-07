@@ -6,6 +6,10 @@ import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
 import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
 
 object TormentaBuild extends Build {
+
+  lazy val slf4jVersion = "1.6.6"
+  lazy val stormVersion = "0.9.0-wip15"
+
   val extraSettings =
     Project.defaultSettings ++ mimaDefaultSettings
 
@@ -19,12 +23,14 @@ object TormentaBuild extends Build {
 
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
-    version := "0.5.4",
+    version := "0.6.0",
     scalaVersion := "2.9.3",
     crossScalaVersions := Seq("2.9.3", "2.10.0"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
     libraryDependencies ++= Seq(
+      "org.slf4j" % "slf4j-api" % slf4jVersion,
+      "storm" % "storm" % stormVersion % "provided",
       "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
       "org.scala-tools.testing" %% "specs" % "1.6.9" % "test"
     ),
@@ -93,7 +99,7 @@ object TormentaBuild extends Build {
   def youngestForwardCompatible(subProj: String) =
     Some(subProj)
       .filterNot(unreleasedModules.contains(_))
-      .map { s => "com.twitter" % ("tormenta-" + s + "_2.9.3") % "0.5.3" }
+      .map { s => "com.twitter" % ("tormenta-" + s + "_2.9.3") % "0.6.0" }
 
   lazy val tormenta = Project(
     id = "tormenta",
@@ -119,9 +125,7 @@ object TormentaBuild extends Build {
     )
   }
 
-  lazy val tormentaCore = module("core").settings(
-    libraryDependencies += "storm" % "storm" % "0.9.0-wip15"
-  )
+  lazy val tormentaCore = module("core")
 
   lazy val tormentaTwitter = module("twitter").settings(
     libraryDependencies += "org.twitter4j" % "twitter4j-stream" % "3.0.3"
@@ -137,8 +141,8 @@ object TormentaBuild extends Build {
 
   lazy val tormentaAvro = module("avro").settings(
     libraryDependencies ++= Seq(
-      "org.apache.avro" % "avro" % "1.7.4",
-      "com.twitter" %% "bijection-core" % "0.5.3",
-      "com.twitter" %% "bijection-avro" % "0.5.3")
+      "org.apache.avro" % "avro" % "1.7.5",
+      "com.twitter" %% "bijection-core" % "0.6.0",
+      "com.twitter" %% "bijection-avro" % "0.6.0")
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 }

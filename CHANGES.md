@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.6.0 ###
+* Add logging, make storm provided: https://github.com/twitter/tormenta/pull/47
+* Upgrades Avro/Bijection-avro: https://github.com/twitter/tormenta/pull/49
+
 ### Version 0.5.4 ###
 * Add Scheme "withHandler" Test: https://github.com/twitter/tormenta/pull/38
 * Fixes Implicit resolution in GenericAvroSchemeLaws: https://github.com/twitter/tormenta/pull/40
