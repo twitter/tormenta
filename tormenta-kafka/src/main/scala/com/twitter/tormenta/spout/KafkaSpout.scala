@@ -24,7 +24,8 @@ import storm.kafka.{ KafkaSpout => StormKafkaSpout, KafkaConfig, SpoutConfig }
  *  @author Sam Ritchie
  */
 
-class KafkaSpout[+T](scheme: Scheme[T], zkHost: String, brokerZkPath: String, topic: String, appID: String, zkRoot: String)
+
+class KafkaSpout[+T](scheme: Scheme[T], zkHost: String, brokerZkPath: String, topic: String, appID: String, zkRoot: String, forceStartOffsetTime: Int = -1)
     extends SchemeSpout[T] {
   override def getSpout[R](transformer: Scheme[T] => Scheme[R]) = {
     // Spout ID needs to be unique per spout, so create that string by taking the topic and appID.
@@ -32,7 +33,7 @@ class KafkaSpout[+T](scheme: Scheme[T], zkHost: String, brokerZkPath: String, to
     val spoutConfig = new SpoutConfig(new KafkaConfig.ZkHosts(zkHost, brokerZkPath), topic, zkRoot, spoutId)
 
     spoutConfig.scheme = transformer(scheme)
-    spoutConfig.forceStartOffsetTime(-1)
+    spoutConfig.forceStartOffsetTime(forceStartOffsetTime)
 
     new StormKafkaSpout(spoutConfig)
   }
