@@ -1,5 +1,8 @@
 # tormenta #
 
+### Version 0.6.1 ###
+* Make the forceStartOffset programmable: https://github.com/twitter/tormenta/pull/51
+
 ### Version 0.6.0 ###
 * Add logging, make storm provided: https://github.com/twitter/tormenta/pull/47
 * Upgrades Avro/Bijection-avro: https://github.com/twitter/tormenta/pull/49
