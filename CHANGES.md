@@ -1,5 +1,8 @@
 # tormenta #
 
+### Version 0.7.0 ###
+* Fix semantic version (minor API change affected binary compatibiltiy of KafkaSpout)
+
 ### Version 0.6.1 ###
 * Make the forceStartOffset programmable: https://github.com/twitter/tormenta/pull/51
 
