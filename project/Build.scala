@@ -23,7 +23,7 @@ object TormentaBuild extends Build {
 
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
-    version := "0.6.1",
+    version := "0.7.0",
     scalaVersion := "2.9.3",
     crossScalaVersions := Seq("2.9.3", "2.10.0"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
@@ -99,7 +99,7 @@ object TormentaBuild extends Build {
   def youngestForwardCompatible(subProj: String) =
     Some(subProj)
       .filterNot(unreleasedModules.contains(_))
-      .map { s => "com.twitter" % ("tormenta-" + s + "_2.9.3") % "0.6.1" }
+      .map { s => "com.twitter" % ("tormenta-" + s + "_2.9.3") % "0.7.0" }
 
   lazy val tormenta = Project(
     id = "tormenta",
