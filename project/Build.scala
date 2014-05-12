@@ -24,7 +24,7 @@ import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
 object TormentaBuild extends Build {
 
   lazy val slf4jVersion = "1.6.6"
-  lazy val stormVersion = "0.9.0.1"
+  lazy val stormVersion = "0.9.0-wip15"
 
   val extraSettings =
     Project.defaultSettings ++ mimaDefaultSettings
