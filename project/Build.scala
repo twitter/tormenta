@@ -129,6 +129,7 @@ object TormentaBuild extends Build {
     tormentaCore,
     tormentaKestrel,
     tormentaKafka,
+    tormentaKafka08,
     tormentaTwitter,
     tormentaAvro
   )
