@@ -21,8 +21,8 @@ import com.twitter.tormenta.scheme.Scheme
 
 trait SchemeSpout[+T] extends Spout[T] {
   /**
-    * This is the only required override.
-    */
+   * This is the only required override.
+   */
   def getSpout[R](transformer: Scheme[T] => Scheme[R]): IRichSpout
 
   override def getSpout = getSpout(identity(_))

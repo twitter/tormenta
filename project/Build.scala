@@ -4,6 +4,8 @@ import sbt._
 import Keys._
 import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
 import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform._
 
 object TormentaBuild extends Build {
 
@@ -11,7 +13,7 @@ object TormentaBuild extends Build {
   lazy val stormVersion = "0.9.0-wip15"
 
   val extraSettings =
-    Project.defaultSettings ++ mimaDefaultSettings
+    Project.defaultSettings ++ mimaDefaultSettings ++ scalariformSettings
 
   def ciSettings: Seq[Project.Setting[_]] =
     if (sys.env.getOrElse("TRAVIS", "false").toBoolean) Seq(
@@ -89,6 +91,13 @@ object TormentaBuild extends Build {
         </developer>
       </developers>)
   )
+
+  lazy val formattingPreferences = {
+   import scalariform.formatter.preferences._
+   FormattingPreferences().
+     setPreference(AlignParameters, false).
+     setPreference(PreserveSpaceBeforeArguments, true)
+  }
 
   /**
     * This returns the youngest jar we released that is compatible

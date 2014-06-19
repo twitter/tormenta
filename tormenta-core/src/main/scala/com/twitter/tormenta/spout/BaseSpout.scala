@@ -20,9 +20,9 @@ import backtype.storm.spout.SpoutOutputCollector
 import backtype.storm.task.TopologyContext
 import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.topology.base.BaseRichSpout
-import backtype.storm.tuple.{Fields, Values}
+import backtype.storm.tuple.{ Fields, Values }
 import backtype.storm.utils.Time
-import java.util.{Map => JMap}
+import java.util.{ Map => JMap }
 
 trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
   var collector: SpoutOutputCollector = null
@@ -45,14 +45,14 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
   def fieldName: String = "item"
 
   /**
-    * Override to supply new tuples.
-    */
+   * Override to supply new tuples.
+   */
   def poll: TraversableOnce[T]
 
   /**
-    * Override this to change the default spout behavior if poll
-    * returns an empty list.
-    */
+   * Override this to change the default spout behavior if poll
+   * returns an empty list.
+   */
   def onEmpty: Unit = Time.sleep(50)
 
   override def getSpout = this

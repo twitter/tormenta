@@ -24,7 +24,6 @@ import storm.kafka.{ KafkaSpout => StormKafkaSpout, KafkaConfig, SpoutConfig }
  *  @author Sam Ritchie
  */
 
-
 class KafkaSpout[+T](scheme: Scheme[T], zkHost: String, brokerZkPath: String, topic: String, appID: String, zkRoot: String, forceStartOffsetTime: Int = -1)
     extends SchemeSpout[T] {
   override def getSpout[R](transformer: Scheme[T] => Scheme[R]) = {
