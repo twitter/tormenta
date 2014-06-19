@@ -24,18 +24,24 @@ import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.tuple.{Fields, Values}
 import backtype.storm.utils.Time
 import java.util.{Map => JMap}
-import scala.collection.mutable.{ MutableList => MList }
+import org.slf4j.LoggerFactory
 
 trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
+  @transient private val logger = LoggerFactory.getLogger(getClass)
 
   var collector: SpoutOutputCollector = null
 
   override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) = {
-    metricFactory += metrics
-    this
+    logger.info("REGISTER METRICS: [{}]", (metrics :: self.metricFactory).size)
+     new BaseSpout[T] {
+      override def fieldName = self.fieldName
+      override def onEmpty = self.onEmpty
+      override def poll = self.poll
+      override def metricFactory = metrics :: self.metricFactory
+    }
   }
 
-  protected val metricFactory: MList[() => TraversableOnce[Metric[_]]] = MList()
+  protected def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
     collector = coll
