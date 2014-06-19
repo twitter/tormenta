@@ -27,7 +27,7 @@ import com.twitter.tormenta.scheme.Scheme
 
 class FlatMappedSchemeSpout[-T, +U](spout: SchemeSpout[T])(fn: T => TraversableOnce[U])
     extends SchemeSpout[U] {
-  override def getSpout = spout.getSpout(_.flatMap(fn))
-  override def getSpout[R](transform: Scheme[U] => Scheme[R]) =
-    spout.getSpout(scheme => transform(scheme.flatMap(fn)))
+  override def getSpout = spout.getSpout(_.flatMap(fn), metricFactory.toList)
+  override def getSpout[R](transform: Scheme[U] => Scheme[R], metrics: List[()=>TraversableOnce[Metric[_]]]) =
+    spout.getSpout(scheme => transform(scheme.flatMap(fn)), metricFactory.toList ++ metrics)
 }

@@ -29,7 +29,7 @@ import java.io.Serializable
   */
 
 case class Metric[T <: IMetric](name: String, metric: T, timeBucketSizeInSecs: Int) {
-  private[spout] def register(context: TopologyContext) {
+  def register(context: TopologyContext) {
     context.registerMetric(name, metric, timeBucketSizeInSecs)
   }
 }

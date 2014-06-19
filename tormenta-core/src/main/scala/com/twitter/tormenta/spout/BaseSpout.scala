@@ -18,24 +18,24 @@ package com.twitter.tormenta.spout
 
 import backtype.storm.spout.SpoutOutputCollector
 import backtype.storm.task.TopologyContext
-import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.topology.base.BaseRichSpout
+import backtype.storm.topology.IRichSpout
+import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.tuple.{Fields, Values}
 import backtype.storm.utils.Time
 import java.util.{Map => JMap}
+import scala.collection.mutable.{ MutableList => MList }
 
 trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
+
   var collector: SpoutOutputCollector = null
 
-  override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
-    new BaseSpout[T] {
-      override def fieldName = self.fieldName
-      override def onEmpty = self.onEmpty
-      override def poll = self.poll
-      override def metricFactory = metrics :: self.metricFactory
-    }
+  override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) = {
+    metricFactory += metrics
+    this
+  }
 
-  protected def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
+  protected val metricFactory: MList[() => TraversableOnce[Metric[_]]] = MList()
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
     collector = coll
@@ -55,14 +55,14 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
     */
   def onEmpty: Unit = Time.sleep(50)
 
-  override def getSpout = this
+  override def getSpout: IRichSpout = this
 
   override def flatMap[U](fn: T => TraversableOnce[U]) =
     new BaseSpout[U] {
       override def fieldName = self.fieldName
       override def onEmpty = self.onEmpty
       override def poll = self.poll.flatMap(fn)
-      override def metricFactory = self.metricFactory
+      override val metricFactory = self.metricFactory
     }
 
   override def nextTuple {
