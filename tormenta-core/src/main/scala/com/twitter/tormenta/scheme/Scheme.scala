@@ -39,8 +39,8 @@ object Scheme {
 
 trait Scheme[+T] extends MultiScheme with Serializable { self =>
   /**
-    * This is the only method you're required to implement.
-    */
+   * This is the only method you're required to implement.
+   */
   def decode(bytes: Array[Byte]): TraversableOnce[T]
 
   def handle(t: Throwable): TraversableOnce[T] = {

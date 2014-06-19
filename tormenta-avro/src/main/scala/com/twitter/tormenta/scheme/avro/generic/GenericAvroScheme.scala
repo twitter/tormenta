@@ -53,14 +53,11 @@ object JsonAvroScheme {
   def apply[T <: GenericRecord](schema: Schema) = new JsonAvroScheme[T](schema)
 }
 
-class JsonAvroScheme[T <: GenericRecord](schema: Schema)extends Scheme[T] with AvroScheme[T] {
+class JsonAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
     implicit val avroInj = GenericAvroCodecs.toJson[T](schema)
     implicit val inj = connect[T, String, Array[Byte]]
     decodeRecord(bytes)
   }
 }
-
-
-
 

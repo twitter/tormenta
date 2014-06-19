@@ -17,7 +17,7 @@
 package com.twitter.tormenta.scheme.avro
 
 import com.twitter.bijection.Injection
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 import com.twitter.tormenta.scheme.Scheme
 
 /**

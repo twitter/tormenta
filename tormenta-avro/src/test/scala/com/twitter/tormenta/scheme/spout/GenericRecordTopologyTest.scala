@@ -14,11 +14,10 @@
  *    limitations under the License.
  */
 
-
 package com.twitter.tormenta.scheme.spout
 
 import backtype.storm.topology.TopologyBuilder
-import backtype.storm.testing.{MockedSources, TestGlobalCount}
+import backtype.storm.testing.{ MockedSources, TestGlobalCount }
 import backtype.storm.LocalCluster
 import com.twitter.tormenta.spout.TraversableSpout
 import backtype.storm.testing.CompleteTopologyParam
@@ -44,7 +43,6 @@ object GenericRecordTopologyTest extends Specification with AvroTestHelper {
     buildGenericAvroRecord("2010-04-03", 3, 3),
     buildGenericAvroRecord("2010-04-04", 4, 4)
   )).flatMap(r => Seq(inj(r)))
-
 
   val builder = new TopologyBuilder
   val localCluster = new LocalCluster

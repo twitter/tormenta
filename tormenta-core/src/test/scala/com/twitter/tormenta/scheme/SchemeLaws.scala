@@ -27,7 +27,7 @@ object SchemeWithHandlerSpecification extends Specification {
       val schemeWithErrorHandler = Scheme(f).withHandler(t => List(t.getMessage))
       val result = schemeWithErrorHandler.deserialize("test string".getBytes("UTF-8"))
 
-      result.asScala.isEmpty mustBe false   //test fails, returns an empty list
+      result.asScala.isEmpty mustBe false //test fails, returns an empty list
       result.asScala.head.get(0) must_== "decode failed"
     }
   }

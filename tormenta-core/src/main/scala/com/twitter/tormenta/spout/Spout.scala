@@ -22,11 +22,11 @@ import backtype.storm.topology.IRichSpout
 import java.io.Serializable
 
 /**
-  * Base trait for Spout implementations.
-  *
-  *  @author Oscar Boykin
-  *  @author Sam Ritchie
-  */
+ * Base trait for Spout implementations.
+ *
+ *  @author Oscar Boykin
+ *  @author Sam Ritchie
+ */
 
 object Spout {
   // TODO: Should this be a TravOnce[TravOnce[T]] to test multi-emit?
