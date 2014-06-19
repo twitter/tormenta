@@ -27,7 +27,7 @@ trait SchemeSpout[+T] extends BaseSpout[T] {
 
   override def poll = List()
 
-  override def getSpout = getSpout(identity(_), metricFactory.toList)
+  override def getSpout = getSpout(identity(_), metricFactory)
 
   override def flatMap[U](fn: T => TraversableOnce[U]): BaseSpout[U] =
     new FlatMappedSchemeSpout(this)(fn)
