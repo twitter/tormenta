@@ -64,7 +64,7 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
       override def fieldName = self.fieldName
       override def onEmpty = self.onEmpty
       override def poll = self.poll.flatMap(fn)
-      override val metricFactory = self.metricFactory
+      override def metricFactory = self.metricFactory
     }
 
   override def nextTuple {
