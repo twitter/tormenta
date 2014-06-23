@@ -23,7 +23,7 @@ import backtype.storm.topology.IRichSpout
 import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.tuple.{Fields, Values}
 import backtype.storm.utils.Time
-import java.util.{Map => JMap}
+import java.util.{ Map => JMap }
 
 trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
 
@@ -37,7 +37,7 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
       override def metricFactory = metrics :: self.metricFactory
     }
 
-  protected def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
+  def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
     collector = coll
