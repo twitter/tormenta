@@ -47,14 +47,14 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
   def fieldName: String = "item"
 
   /**
-    * Override to supply new tuples.
-    */
+   * Override to supply new tuples.
+   */
   def poll: TraversableOnce[T]
 
   /**
-    * Override this to change the default spout behavior if poll
-    * returns an empty list.
-    */
+   * Override this to change the default spout behavior if poll
+   * returns an empty list.
+   */
   def onEmpty: Unit = Time.sleep(50)
 
   override def getSpout: IRichSpout = this

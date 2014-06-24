@@ -22,11 +22,11 @@ import backtype.storm.metric.api.IMetric
 import java.io.Serializable
 
 /**
-  * Abstraction for encapsulating metric options
-  *
-  *  @author Oscar Boykin
-  *  @author Sam Ritchie
-  */
+ * Abstraction for encapsulating metric options
+ *
+ *  @author Oscar Boykin
+ *  @author Sam Ritchie
+ */
 
 case class Metric[T <: IMetric](name: String, metric: T, timeBucketSizeInSecs: Int) {
   private[spout] def register(context: TopologyContext) {

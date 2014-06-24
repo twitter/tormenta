@@ -28,10 +28,10 @@ import org.apache.avro.specific.SpecificRecordBase
  * @since 9/14/13
  */
 object SpecificAvroScheme {
-  def apply[T <: SpecificRecordBase : Manifest] = new SpecificAvroScheme[T]
+  def apply[T <: SpecificRecordBase: Manifest] = new SpecificAvroScheme[T]
 }
 
-class SpecificAvroScheme[T <: SpecificRecordBase : Manifest] extends Scheme[T] with AvroScheme[T] {
+class SpecificAvroScheme[T <: SpecificRecordBase: Manifest] extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
     implicit val inj = SpecificAvroCodecs[T]
     decodeRecord(bytes)
@@ -39,10 +39,10 @@ class SpecificAvroScheme[T <: SpecificRecordBase : Manifest] extends Scheme[T] w
 }
 
 object BinaryAvroScheme {
-  def apply[T <: SpecificRecordBase : Manifest] = new BinaryAvroScheme[T]
+  def apply[T <: SpecificRecordBase: Manifest] = new BinaryAvroScheme[T]
 }
 
-class BinaryAvroScheme[T <: SpecificRecordBase : Manifest] extends Scheme[T] with AvroScheme[T] {
+class BinaryAvroScheme[T <: SpecificRecordBase: Manifest] extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
     implicit val inj = SpecificAvroCodecs.toBinary[T]
     decodeRecord(bytes)
@@ -50,18 +50,14 @@ class BinaryAvroScheme[T <: SpecificRecordBase : Manifest] extends Scheme[T] wit
 }
 
 object JsonAvroScheme {
-  def apply[T <: SpecificRecordBase : Manifest](schema: Schema) = new JsonAvroScheme[T](schema)
+  def apply[T <: SpecificRecordBase: Manifest](schema: Schema) = new JsonAvroScheme[T](schema)
 }
 
-class JsonAvroScheme[T <: SpecificRecordBase : Manifest](schema: Schema) extends Scheme[T] with AvroScheme[T] {
+class JsonAvroScheme[T <: SpecificRecordBase: Manifest](schema: Schema) extends Scheme[T] with AvroScheme[T] {
   def decode(bytes: Array[Byte]): TraversableOnce[T] = {
     implicit val avroInj = SpecificAvroCodecs.toJson[T](schema)
     implicit val inj = connect[T, String, Array[Byte]]
     decodeRecord(bytes)
   }
 }
-
-
-
-
 

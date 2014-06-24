@@ -20,10 +20,10 @@ import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
 
 /**
-  * Spout that performs a flatMap operation on its contained
-  * SchemeSpout. Used to implement map, filter and flatMap on
-  * SchemeSpout.
-  */
+ * Spout that performs a flatMap operation on its contained
+ * SchemeSpout. Used to implement map, filter and flatMap on
+ * SchemeSpout.
+ */
 
 class FlatMappedSchemeSpout[-T, +U](spout: SchemeSpout[T])(fn: T => TraversableOnce[U])
     extends SchemeSpout[U] {
