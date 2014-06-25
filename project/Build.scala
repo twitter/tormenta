@@ -136,6 +136,7 @@ object TormentaBuild extends Build {
 
   lazy val tormentaCore = module("core").settings(
     libraryDependencies += "com.twitter" %% "chill" % "0.3.6"
+    exclude("com.esotericsoftware.kryo", "kryo")
   )
 
   lazy val tormentaTwitter = module("twitter").settings(
