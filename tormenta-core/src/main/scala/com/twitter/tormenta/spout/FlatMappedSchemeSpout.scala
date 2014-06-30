@@ -25,8 +25,18 @@ import backtype.storm.topology.base.BaseRichSpout
  * SchemeSpout. Used to implement map, filter and flatMap on
  * SchemeSpout.
  */
-// T => U ==> R
-class FlatMappedSpoutProvider[-T, +U](provider: SpoutProvider[T])(fn: T => TraversableOnce[U]) extends SpoutProvider[U] {
+
+class FlatMappedSpoutProvider[+T](spout: SpoutProvider[T]) {
+  def flatMap[U](fn: T => TraversableOnce[U]): SpoutProvider[U] = new FlatMappedEnabledSpoutProvider(spout)(fn)
+
+  def filter(fn: T => Boolean): SpoutProvider[T] =
+    flatMap[T](t => if (fn(t)) Some(t) else None)
+
+  def map[U](fn: T => U): SpoutProvider[U] =
+    flatMap(t => Some(fn(t)))
+}
+
+class FlatMappedEnabledSpoutProvider[-T, +U](provider: SpoutProvider[T])(fn: T => TraversableOnce[U]) extends SpoutProvider[U] {
   override def getSpout[R](transform: SchemeTransformer[U, R]) =
     provider.getSpout(new SchemeTransformer(fn).flatMap(transform.apply(_)))
 }

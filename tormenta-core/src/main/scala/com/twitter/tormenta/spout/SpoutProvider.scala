@@ -27,6 +27,7 @@ import com.twitter.tormenta.scheme.SchemeTransformer
 
 object SpoutProvider {
   implicit def withMetrics[T](provider: SpoutProvider[T]): MetricsSpoutProvider[T] = new MetricsSpoutProvider(provider)
+  implicit def withFlatMapOperations[T](provider: SpoutProvider[T]): FlatMappedSpoutProvider[T] = new FlatMappedSpoutProvider(provider)
 
   def fromTraversable[T](items: TraversableOnce[T]): SpoutProvider[T] = new TraversableSpoutProvider(items, "item")
 
@@ -62,12 +63,4 @@ trait SpoutProvider[+T] { self =>
   def getSpout: IRichSpout = getSpout(SchemeTransformer.identity)
 
   def getSpout[R](transformer: SchemeTransformer[T, R]): IRichSpout
-
-  def flatMap[U](fn: T => TraversableOnce[U]): SpoutProvider[U] = new FlatMappedSpoutProvider(self)(fn)
-
-  def filter(fn: T => Boolean): SpoutProvider[T] =
-    flatMap[T](t => if (fn(t)) Some(t) else None)
-
-  def map[U](fn: T => U): SpoutProvider[U] =
-    flatMap(t => Some(fn(t)))
 }
