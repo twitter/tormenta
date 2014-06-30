@@ -31,6 +31,11 @@ import org.slf4j.LoggerFactory
 object Scheme {
   val identity: Scheme[Array[Byte]] = Scheme(Some(_))
 
+  def apply[T](decodeTransformer: SchemeTransformer[Array[Byte], T]) =
+    new Scheme[T] {
+      override def decode(bytes: Array[Byte]) = decodeTransformer(bytes)
+    }
+
   def apply[T](decodeFn: Array[Byte] => TraversableOnce[T]) =
     new Scheme[T] {
       override def decode(bytes: Array[Byte]) = decodeFn(bytes)
@@ -56,6 +61,9 @@ trait Scheme[+T] extends MultiScheme with Serializable { self =>
       override def handle(t: Throwable) = fn(t)
       override def decode(bytes: Array[Byte]) = self.decode(bytes)
     }
+
+  def transform[R](transformer: SchemeTransformer[T, R]): Scheme[R] =
+    Scheme(self.decode(_).flatMap(transformer.apply(_)))
 
   def filter(fn: T => Boolean): Scheme[T] =
     Scheme(self.decode(_).filter(fn))

@@ -25,6 +25,7 @@ import backtype.storm.utils.Time
 import java.util.{ Map => JMap }
 import java.util.concurrent.LinkedBlockingQueue
 import twitter4j._
+import com.twitter.tormenta.scheme.SchemeTransformer
 
 /**
  * Storm Spout implementation for Twitter's streaming API.
@@ -43,8 +44,13 @@ object TwitterSpout {
     new TwitterSpout(factory, limit, fieldName)(i => Some(i))
 }
 
+class TwitterSpoutProvider(factory: TwitterStreamFactory, limit: Int, fieldName: String) extends SpoutProvider[Status] {
+  override def getSpout[R](transform: SchemeTransformer[Status, R]) =
+    new TwitterSpout(factory, limit, fieldName)(transform.apply(_))
+}
+
 class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: String)(fn: Status => TraversableOnce[T])
-    extends BaseRichSpout with Spout[T] {
+    extends BaseRichSpout {
 
   var stream: TwitterStream = null
   var collector: SpoutOutputCollector = null
@@ -60,8 +66,6 @@ class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: Str
     def onTrackLimitationNotice(numberOfLimitedStatuses: Int) {}
     def onException(ex: Exception) {}
   }
-
-  override def getSpout = this
 
   override def declareOutputFields(declarer: OutputFieldsDeclarer) {
     declarer.declare(new Fields(fieldName))
@@ -90,9 +94,6 @@ class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: Str
       }
     }
   }
-
-  override def flatMap[U](newFn: T => TraversableOnce[U]) =
-    new TwitterSpout(factory, limit, fieldName)(fn(_).flatMap(newFn))
 
   override def close { stream.shutdown }
 }

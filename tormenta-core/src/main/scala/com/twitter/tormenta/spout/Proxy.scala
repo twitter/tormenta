@@ -8,11 +8,12 @@ import com.twitter.tormenta.Externalizer
 import java.io.Serializable
 import java.util.{ Map => JMap }
 
-/***
-  * Proxied trait for type T
-  * allows for overriding certain methods but forwarding behavior of all other methods of T.
-  * See com.twitter.storehaus.Proxy for a detailed example.
-*/
+/**
+ * *
+ * Proxied trait for type T
+ * allows for overriding certain methods but forwarding behavior of all other methods of T.
+ * See com.twitter.storehaus.Proxy for a detailed example.
+ */
 trait Proxied[T] {
   protected def self: T
 }
@@ -31,11 +32,11 @@ trait SpoutProxy extends IRichSpout with Proxied[IRichSpout] with Serializable {
 }
 
 class RichStormSpout(val self: IRichSpout,
-                     @transient metrics: List[() => TraversableOnce[Metric[_]]]) extends SpoutProxy {
+    @transient metrics: () => TraversableOnce[Metric[_]]) extends SpoutProxy {
   val lockedMetrics = Externalizer(metrics)
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
-    lockedMetrics.get.foreach(mList => mList().foreach(_.register(context)))
+    lockedMetrics.get().foreach(_.register(context))
     self.open(conf, context, coll)
   }
 }

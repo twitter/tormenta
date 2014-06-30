@@ -24,20 +24,23 @@ import backtype.storm.tuple.Values
 import clojure.lang.RT
 import java.util.{ List => JList, ArrayList }
 import collection.JavaConverters._
+import com.twitter.tormenta.scheme.SchemeTransformer
 
-object TraversableSpout {
-  def apply[T](items: TraversableOnce[T], fieldName: String = "item"): TraversableSpout[T] =
-    new TraversableSpout(items, fieldName)
+object TraversableSpoutProvider {
+  def apply[T](items: TraversableOnce[T], fieldName: String = "item"): TraversableSpoutProvider[T] =
+    new TraversableSpoutProvider(items, fieldName)
 }
 
-class TraversableSpout[+T](items: TraversableOnce[T], fieldName: String) extends Spout[T] {
+class TraversableSpoutProvider[+T](items: TraversableOnce[T], fieldName: String) extends SpoutProvider[T] {
   private def wrap[T](t: T) = new Values(t.asInstanceOf[AnyRef])
 
-  lazy val tupleList = items.toList
-  lazy val javaList = new ArrayList(tupleList.map(wrap).asJava)
+  override def getSpout[R](transform: SchemeTransformer[T, R]) = {
 
-  override def getSpout = new FixedTupleSpout(javaList, fieldName)
+    lazy val mutatedTuples = items.flatMap(transform(_))
 
-  def flatMap[U](fn: T => TraversableOnce[U]) =
-    new TraversableSpout(tupleList.flatMap(fn), fieldName)
+    lazy val tupleList = mutatedTuples.toList
+    lazy val javaList = new ArrayList(tupleList.map(wrap).asJava)
+
+    new FixedTupleSpout(javaList, fieldName)
+  }
 }

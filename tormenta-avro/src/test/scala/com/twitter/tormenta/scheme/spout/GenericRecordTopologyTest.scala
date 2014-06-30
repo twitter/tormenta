@@ -19,7 +19,7 @@ package com.twitter.tormenta.scheme.spout
 import backtype.storm.topology.TopologyBuilder
 import backtype.storm.testing.{ MockedSources, TestGlobalCount }
 import backtype.storm.LocalCluster
-import com.twitter.tormenta.spout.TraversableSpout
+import com.twitter.tormenta.spout.TraversableSpoutProvider
 import backtype.storm.testing.CompleteTopologyParam
 import backtype.storm.tuple.Values
 import backtype.storm.Testing
@@ -37,7 +37,7 @@ import org.apache.avro.generic.GenericRecord
 object GenericRecordTopologyTest extends Specification with AvroTestHelper {
   val inj = GenericAvroCodecs[GenericRecord](testSchema)
 
-  val genericSpout = TraversableSpout[GenericRecord](List(
+  val genericSpout = TraversableSpoutProvider[GenericRecord](List(
     buildGenericAvroRecord("2010-01-01", 1, 1),
     buildGenericAvroRecord("2010-02-02", 2, 2),
     buildGenericAvroRecord("2010-04-03", 3, 3),

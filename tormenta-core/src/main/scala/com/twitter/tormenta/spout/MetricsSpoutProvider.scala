@@ -18,15 +18,14 @@ package com.twitter.tormenta.spout
 
 import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.SchemeTransformer
-import backtype.storm.topology.base.BaseRichSpout
 
-/**
- * SpoutProvider that performs a flatMap operation on its contained
- * SchemeSpout. Used to implement map, filter and flatMap on
- * SchemeSpout.
- */
-// T => U ==> R
-class FlatMappedSpoutProvider[-T, +U](provider: SpoutProvider[T])(fn: T => TraversableOnce[U]) extends SpoutProvider[U] {
-  override def getSpout[R](transform: SchemeTransformer[U, R]) =
-    provider.getSpout(new SchemeTransformer(fn).flatMap(transform.apply(_)))
+class MetricsSpoutProvider[+T](spout: SpoutProvider[T]) {
+  def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
+    new MetricsEnabledSpoutProvider[T](spout, metrics)
+}
+
+class MetricsEnabledSpoutProvider[+T](spout: SpoutProvider[T], metrics: () => TraversableOnce[Metric[_]]) extends SpoutProvider[T] {
+  override def getSpout: IRichSpout = getSpout(SchemeTransformer.identity)
+  override def getSpout[R](transform: SchemeTransformer[T, R]): IRichSpout =
+    new RichStormSpout(spout.getSpout(transform), metrics)
 }
