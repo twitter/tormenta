@@ -19,11 +19,15 @@ package com.twitter.tormenta.spout
 import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.SchemeTransformer
 
+// We keep these as an enrichment to separate out the methods, though only one here for now
 class MetricsSpoutProvider[+T](spout: SpoutProvider[T]) {
   def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
     new MetricsEnabledSpoutProvider[T](spout, metrics)
 }
 
+// The metricsEnabledSpoutProvider is designed to wrap the spout returned by lower levels in a proxy
+// Here we override the open method to add the metrics.
+// Multiple calls can occur, each will proxy on the open method and register their metrics in turn.
 class MetricsEnabledSpoutProvider[+T](spout: SpoutProvider[T], metrics: () => TraversableOnce[Metric[_]]) extends SpoutProvider[T] {
   override def getSpout: Spout[T] = getSpout(SchemeTransformer.identity)
   override def getSpout[R](transform: SchemeTransformer[T, R]): Spout[R] =
