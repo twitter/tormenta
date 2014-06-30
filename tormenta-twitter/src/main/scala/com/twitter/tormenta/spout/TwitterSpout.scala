@@ -41,15 +41,15 @@ object TwitterSpout {
     factory: TwitterStreamFactory,
     limit: Int = QUEUE_LIMIT,
     fieldName: String = FIELD_NAME): TwitterSpout[Status] =
-    new TwitterSpout(factory, limit, fieldName)(i => Some(i))
+    new TwitterSpout(factory, limit, fieldName)(SchemeTransformer.identity)
 }
 
 class TwitterSpoutProvider(factory: TwitterStreamFactory, limit: Int, fieldName: String) extends SpoutProvider[Status] {
   override def getSpout[R](transform: SchemeTransformer[Status, R]) =
-    new TwitterSpout(factory, limit, fieldName)(transform.apply(_))
+    new TwitterSpout(factory, limit, fieldName)(transform)
 }
 
-class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: String)(fn: Status => TraversableOnce[T])
+class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: String)(fn: SchemeTransformer[Status, T])
     extends BaseRichSpout with Spout[T] {
 
   var stream: TwitterStream = null
@@ -87,7 +87,7 @@ class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: Str
   def onEmpty: Unit = Time.sleep(50)
 
   override def nextTuple {
-    Option(queue.poll).map(fn) match {
+    Option(queue.poll).map(fn.apply(_)) match {
       case None => onEmpty
       case Some(items) => items.foreach { item =>
         collector.emit(new Values(item.asInstanceOf[AnyRef]))

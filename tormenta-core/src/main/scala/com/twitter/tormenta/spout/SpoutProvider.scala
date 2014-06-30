@@ -31,7 +31,7 @@ object SpoutProvider {
 
   def fromTraversable[T](items: TraversableOnce[T]): SpoutProvider[T] = new TraversableSpoutProvider(items, "item")
 
-  def fromFn[T](fn: () => TraversableOnce[T]): SpoutProvider[T] =
+  def fromFn[T](pollFunction: () => TraversableOnce[T]): SpoutProvider[T] =
     new SpoutProvider[T] {
       def getSpout[R](transformer: SchemeTransformer[T, R]): Spout[R] =
         new BaseRichSpout with Spout[R] {
@@ -40,7 +40,7 @@ object SpoutProvider {
             collector = coll
           }
           def fieldName: String = "item"
-          def poll: TraversableOnce[T] = fn.apply
+          def poll: TraversableOnce[T] = pollFunction.apply
           def onEmpty: Unit = Thread.sleep(50)
           override def nextTuple {
             poll match {

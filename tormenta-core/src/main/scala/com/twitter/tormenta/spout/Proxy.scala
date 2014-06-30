@@ -14,7 +14,7 @@ import java.util.{ Map => JMap }
  * allows for overriding certain methods but forwarding behavior of all other methods of T.
  * See com.twitter.storehaus.Proxy for a detailed example.
  */
-trait Proxied[T] {
+trait Proxied[+T] {
   protected def self: T
 }
 
