@@ -24,24 +24,30 @@ import java.io.Serializable
 import org.slf4j.LoggerFactory
 
 /**
- *  @author Oscar Boykin
- *  @author Sam Ritchie
+ *  @author Ian O Connell
  */
 
 object SchemeTransformer {
   def identity[T] = SchemeTransformer[T, T](Some(_))
+  def apply[T, U](baseFn: T => TraversableOnce[U]): SchemeTransformer[T, U] = new SchemeTransformer[T, U] {
+    def apply(t: T) = baseFn(t)
+  }
 }
 
-case class SchemeTransformer[-T, U](baseFn: T => TraversableOnce[U]) {
-  def apply(t: T): TraversableOnce[U] = baseFn(t)
+// This is Isomorphic to FlatMappedFn in Scalding
+// https://github.com/twitter/scalding/blob/develop/scalding-core/src/main/scala/com/twitter/scalding/typed/FlatMappedFn.scala
+trait SchemeTransformer[-T, +U] {
+  def apply(t: T): TraversableOnce[U]
 
   def filter(fn: U => Boolean): SchemeTransformer[T, U] =
-    new SchemeTransformer(baseFn.andThen(_.filter(fn)))
+    SchemeTransformer(apply(_).filter(fn))
 
   def map[R](fn: U => R): SchemeTransformer[T, R] =
-    new SchemeTransformer(baseFn.andThen(_.map(fn)))
+    SchemeTransformer(apply(_).map(fn))
+
+  def collect[R](fn: PartialFunction[U, R]): SchemeTransformer[T, R] =
+    SchemeTransformer(apply(_).filter(fn.isDefinedAt(_)).map(fn(_)))
 
   def flatMap[R](fn: U => TraversableOnce[R]): SchemeTransformer[T, R] =
-    new SchemeTransformer(baseFn.andThen(_.flatMap(fn)))
-
+    SchemeTransformer(apply(_).flatMap(fn))
 }

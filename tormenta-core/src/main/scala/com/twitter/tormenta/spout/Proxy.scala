@@ -18,7 +18,7 @@ trait Proxied[T] {
   protected def self: T
 }
 
-trait SpoutProxy extends IRichSpout with Proxied[IRichSpout] with Serializable {
+trait SpoutProxy[T, U <: Spout[T]] extends Spout[T] with Proxied[U] {
   override def open(conf: JMap[_, _], topologyContext: TopologyContext, outputCollector: SpoutOutputCollector) =
     self.open(conf, topologyContext, outputCollector)
   override def nextTuple = self.nextTuple
@@ -31,8 +31,8 @@ trait SpoutProxy extends IRichSpout with Proxied[IRichSpout] with Serializable {
   override def activate = self.activate
 }
 
-class RichStormSpout(val self: IRichSpout,
-    @transient metrics: () => TraversableOnce[Metric[_]]) extends SpoutProxy {
+class RichStormSpout[T, U <: Spout[T]](val self: U,
+    @transient metrics: () => TraversableOnce[Metric[_]]) extends SpoutProxy[T, U] {
   val lockedMetrics = Externalizer(metrics)
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {

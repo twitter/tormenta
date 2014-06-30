@@ -28,5 +28,5 @@ import scala.collection.JavaConverters._
 class KestrelSpout[+T](scheme: Scheme[T], hosts: List[String], name: String, port: Int = 2229)
     extends SpoutProvider[T] {
   override def getSpout[R](transformer: SchemeTransformer[T, R]) =
-    new KestrelThriftSpout(hosts.asJava, port, name, scheme.transform(transformer))
+    new KestrelThriftSpout(hosts.asJava, port, name, scheme.transform(transformer)) with Spout[R]
 }

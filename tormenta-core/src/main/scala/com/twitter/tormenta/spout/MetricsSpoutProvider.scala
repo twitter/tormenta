@@ -25,7 +25,7 @@ class MetricsSpoutProvider[+T](spout: SpoutProvider[T]) {
 }
 
 class MetricsEnabledSpoutProvider[+T](spout: SpoutProvider[T], metrics: () => TraversableOnce[Metric[_]]) extends SpoutProvider[T] {
-  override def getSpout: IRichSpout = getSpout(SchemeTransformer.identity)
-  override def getSpout[R](transform: SchemeTransformer[T, R]): IRichSpout =
-    new RichStormSpout(spout.getSpout(transform), metrics)
+  override def getSpout: Spout[T] = getSpout(SchemeTransformer.identity)
+  override def getSpout[R](transform: SchemeTransformer[T, R]): Spout[R] =
+    new RichStormSpout[R, Spout[R]](spout.getSpout(transform), metrics)
 }

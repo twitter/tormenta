@@ -50,7 +50,7 @@ class TwitterSpoutProvider(factory: TwitterStreamFactory, limit: Int, fieldName:
 }
 
 class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: String)(fn: Status => TraversableOnce[T])
-    extends BaseRichSpout {
+    extends BaseRichSpout with Spout[T] {
 
   var stream: TwitterStream = null
   var collector: SpoutOutputCollector = null

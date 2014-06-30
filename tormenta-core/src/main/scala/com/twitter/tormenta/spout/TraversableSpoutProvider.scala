@@ -41,6 +41,6 @@ class TraversableSpoutProvider[+T](items: TraversableOnce[T], fieldName: String)
     lazy val tupleList = mutatedTuples.toList
     lazy val javaList = new ArrayList(tupleList.map(wrap).asJava)
 
-    new FixedTupleSpout(javaList, fieldName)
+    new FixedTupleSpout(javaList, fieldName) with Spout[R]
   }
 }

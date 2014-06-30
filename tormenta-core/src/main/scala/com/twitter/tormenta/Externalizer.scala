@@ -22,6 +22,10 @@ import com.twitter.chill.{ Externalizer => ChillExtern, KryoInstantiator, ScalaK
  * *
  * Need to create our own Externalizer to avoid calling chill Externalizer that uses setReferences,
  * which creates a Kryo version conflict (see https://github.com/twitter/chill/issues/173).
+ *
+ * TODO: https://github.com/twitter/tormenta/issues/56
+ * This has been fixed in storm, but internal Twitter dependencies on the pre-apache classpath
+ * prevents the upgrade here. See https://issues.apache.org/jira/browse/STORM-263
  */
 
 object Externalizer {

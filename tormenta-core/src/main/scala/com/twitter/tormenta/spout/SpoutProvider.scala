@@ -33,8 +33,8 @@ object SpoutProvider {
 
   def fromFn[T](fn: () => TraversableOnce[T]): SpoutProvider[T] =
     new SpoutProvider[T] {
-      def getSpout[R](transformer: SchemeTransformer[T, R]): IRichSpout =
-        new BaseRichSpout {
+      def getSpout[R](transformer: SchemeTransformer[T, R]): Spout[R] =
+        new BaseRichSpout with Spout[R] {
           var collector: SpoutOutputCollector = null
           override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
             collector = coll
@@ -60,7 +60,7 @@ object SpoutProvider {
 }
 
 trait SpoutProvider[+T] { self =>
-  def getSpout: IRichSpout = getSpout(SchemeTransformer.identity)
+  def getSpout: Spout[T] = getSpout(SchemeTransformer.identity)
 
-  def getSpout[R](transformer: SchemeTransformer[T, R]): IRichSpout
+  def getSpout[R](transformer: SchemeTransformer[T, R]): Spout[R]
 }
