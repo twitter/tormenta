@@ -40,7 +40,7 @@ object SpoutProvider {
             collector = coll
           }
           def fieldName: String = "item"
-          def poll: TraversableOnce[T] = pollFunction.apply
+          def poll: TraversableOnce[R] = pollFunction.apply.flatMap(transformer(_))
           def onEmpty: Unit = Thread.sleep(50)
           override def nextTuple {
             poll match {
