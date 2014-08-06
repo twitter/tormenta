@@ -17,22 +17,26 @@ limitations under the License.
 package com.twitter.tormenta.spout
 
 import backtype.storm.topology.IRichSpout
-import com.twitter.tormenta.scheme.Scheme
+import com.twitter.tormenta.scheme.SchemeTransformer
+import backtype.storm.topology.base.BaseRichSpout
 
 /**
- * Spout that performs a flatMap operation on its contained
+ * SpoutProvider that performs a flatMap operation on its contained
  * SchemeSpout. Used to implement map, filter and flatMap on
  * SchemeSpout.
  */
 
-class FlatMappedSchemeSpout[-T, +U](spout: SchemeSpout[T])(fn: T => TraversableOnce[U])
-    extends SchemeSpout[U] {
-  override def getSpout = spout.getSpout(_.flatMap(fn), metricFactory)
-  override def getSpout[R](transform: Scheme[U] => Scheme[R], metrics: List[()=>TraversableOnce[Metric[_]]]) =
-    spout.getSpout(scheme => transform(scheme.flatMap(fn)), metrics)
+class FlatMappedSpoutProvider[+T](spout: SpoutProvider[T]) {
+  def flatMap[U](fn: T => TraversableOnce[U]): SpoutProvider[U] = new FlatMappedEnabledSpoutProvider(spout)(fn)
 
-  override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
-    new FlatMappedSchemeSpout[T, U](spout)(fn) {
-      override def metricFactory = metrics :: spout.metricFactory
-    }
+  def filter(fn: T => Boolean): SpoutProvider[T] =
+    flatMap[T](t => if (fn(t)) Some(t) else None)
+
+  def map[U](fn: T => U): SpoutProvider[U] =
+    flatMap(t => Some(fn(t)))
+}
+
+class FlatMappedEnabledSpoutProvider[-T, +U](provider: SpoutProvider[T])(fn: T => TraversableOnce[U]) extends SpoutProvider[U] {
+  override def getSpout[R](transform: SchemeTransformer[U, R]) =
+    provider.getSpout(SchemeTransformer(fn).flatMap(transform.apply(_)))
 }

@@ -16,39 +16,7 @@
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.task.TopologyContext
 import backtype.storm.topology.IRichSpout
 
-import java.io.Serializable
+trait Spout[+T] extends IRichSpout
 
-/**
- * Base trait for Spout implementations.
- *
- *  @author Oscar Boykin
- *  @author Sam Ritchie
- */
-
-object Spout {
-  // TODO: Should this be a TravOnce[TravOnce[T]] to test multi-emit?
-  def fromTraversable[T](items: TraversableOnce[T]): Spout[T] =
-    TraversableSpout(items)
-
-  def fromFn[T](fn: () => TraversableOnce[T]): Spout[T] =
-    new BaseSpout[T] {
-      override def poll = fn.apply
-    }
-}
-
-trait Spout[+T] extends Serializable { self =>
-  def getSpout: IRichSpout
-
-  def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) = self
-
-  def flatMap[U](fn: T => TraversableOnce[U]): Spout[U]
-
-  def filter(fn: T => Boolean): Spout[T] =
-    flatMap[T](t => if (fn(t)) Some(t) else None)
-
-  def map[U](fn: T => U): Spout[U] =
-    flatMap(t => Some(fn(t)))
-}

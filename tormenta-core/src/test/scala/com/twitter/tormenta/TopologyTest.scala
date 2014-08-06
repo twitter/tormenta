@@ -19,7 +19,7 @@ package com.twitter.tormenta
 import backtype.storm.topology.TopologyBuilder
 import backtype.storm.testing.{ MockedSources, TestGlobalCount, CompletableSpout }
 import backtype.storm.LocalCluster
-import com.twitter.tormenta.spout.Spout
+import com.twitter.tormenta.spout.SpoutProvider
 import backtype.storm.testing.CompleteTopologyParam
 import backtype.storm.tuple.Values
 import backtype.storm.Testing
@@ -27,7 +27,7 @@ import org.specs._
 import scala.collection.JavaConverters._
 
 object TopologyTest extends Specification {
-  val spout: Spout[Int] = Spout.fromTraversable(List(1, 2, 3, 4, 5))
+  val spout: SpoutProvider[Int] = SpoutProvider.fromTraversable(List(1, 2, 3, 4, 5))
 
   val builder = new TopologyBuilder
   val localCluster = new LocalCluster
