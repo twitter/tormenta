@@ -21,9 +21,9 @@ import com.twitter.tormenta.scheme.Scheme
 
 trait SchemeSpout[+T] extends BaseSpout[T] {
   /**
-    * This is the only required override.
-    */
-  def getSpout[R](transformer: Scheme[T] => Scheme[R], metrics: List[()=>TraversableOnce[Metric[_]]]): IRichSpout
+   * This is the only required override.
+   */
+  def getSpout[R](transformer: Scheme[T] => Scheme[R], metrics: List[() => TraversableOnce[Metric[_]]]): IRichSpout
 
   override def poll = List()
 

@@ -21,7 +21,7 @@ import backtype.storm.task.TopologyContext
 import backtype.storm.topology.base.BaseRichSpout
 import backtype.storm.topology.IRichSpout
 import backtype.storm.topology.OutputFieldsDeclarer
-import backtype.storm.tuple.{Fields, Values}
+import backtype.storm.tuple.{ Fields, Values }
 import backtype.storm.utils.Time
 import java.util.{ Map => JMap }
 
@@ -30,7 +30,7 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
   var collector: SpoutOutputCollector = null
 
   override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
-     new BaseSpout[T] {
+    new BaseSpout[T] {
       override def fieldName = self.fieldName
       override def onEmpty = self.onEmpty
       override def poll = self.poll
