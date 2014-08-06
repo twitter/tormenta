@@ -20,14 +20,19 @@ import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
 
 /**
-  * Spout that performs a flatMap operation on its contained
-  * SchemeSpout. Used to implement map, filter and flatMap on
-  * SchemeSpout.
-  */
+ * Spout that performs a flatMap operation on its contained
+ * SchemeSpout. Used to implement map, filter and flatMap on
+ * SchemeSpout.
+ */
 
 class FlatMappedSchemeSpout[-T, +U](spout: SchemeSpout[T])(fn: T => TraversableOnce[U])
     extends SchemeSpout[U] {
-  override def getSpout = spout.getSpout(_.flatMap(fn))
-  override def getSpout[R](transform: Scheme[U] => Scheme[R]) =
-    spout.getSpout(scheme => transform(scheme.flatMap(fn)))
+  override def getSpout = spout.getSpout(_.flatMap(fn), metricFactory)
+  override def getSpout[R](transform: Scheme[U] => Scheme[R], metrics: List[() => TraversableOnce[Metric[_]]]) =
+    spout.getSpout(scheme => transform(scheme.flatMap(fn)), metrics)
+
+  override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
+    new FlatMappedSchemeSpout[T, U](spout)(fn) {
+      override def metricFactory = metrics :: spout.metricFactory
+    }
 }

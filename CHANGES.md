@@ -1,5 +1,9 @@
 # tormenta #
 
+### Version 0.8.0 ###
+* Use scalainform: https://github.com/twitter/tormenta/pull/54
+* Modifications to Spout code to allow for metric registration: https://github.com/twitter/tormenta/pull/53
+
 ### Version 0.7.0 ###
 * Fix semantic version (minor API change affected binary compatibiltiy of KafkaSpout)
 

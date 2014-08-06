@@ -22,7 +22,7 @@ import com.twitter.bijection.avro.SpecificAvroCodecs
 
 import com.twitter.bijection.Injection._
 import avro.FiscalRecord
-import com.twitter.tormenta.scheme.avro.specific.{JsonAvroScheme, BinaryAvroScheme, SpecificAvroScheme}
+import com.twitter.tormenta.scheme.avro.specific.{ JsonAvroScheme, BinaryAvroScheme, SpecificAvroScheme }
 import org.apache.avro.Schema
 import com.twitter.tormenta.scheme.Scheme
 import com.twitter.tormenta.AvroTestHelper
@@ -46,7 +46,6 @@ object SpecificAvroSchemeLaws extends Properties("SpecificAvroScheme") with Base
     isAvroRecordNotDecoded[FiscalRecord]
   }
 
-
   property("round trips Specific Record using Specific Avro Scheme") = {
     implicit val inj = SpecificAvroCodecs[FiscalRecord]
     implicit val scheme = SpecificAvroScheme[FiscalRecord]
@@ -69,18 +68,18 @@ object SpecificAvroSchemeLaws extends Properties("SpecificAvroScheme") with Base
   property("Simulates Specific Avro Scheme failure") = {
     implicit val jinj = SpecificAvroCodecs.toJson[FiscalRecord](testSchema) //passing wrong injection to produce incorrect bytes
     implicit val inj = connect[FiscalRecord, String, Array[Byte]]
-    implicit val scheme = BinaryAvroScheme[FiscalRecord].withHandler(t=>List(failedGenericRecord))
+    implicit val scheme = BinaryAvroScheme[FiscalRecord].withHandler(t => List(failedGenericRecord))
     simulateSpecificRecordFailure
   }
 
   property("simulate Binary Avro Scheme") = {
     implicit val inj = SpecificAvroCodecs[FiscalRecord] //passing wrong injection to produce incorrect bytes
-    implicit val scheme = BinaryAvroScheme[FiscalRecord].withHandler(t=>List(failedGenericRecord))
+    implicit val scheme = BinaryAvroScheme[FiscalRecord].withHandler(t => List(failedGenericRecord))
     simulateSpecificRecordFailure
   }
 
   property("round trips Specific Record using Json Avro Scheme") = {
-    implicit val scheme = JsonAvroScheme[FiscalRecord](testSchema).withHandler(t=>List(failedGenericRecord))
+    implicit val scheme = JsonAvroScheme[FiscalRecord](testSchema).withHandler(t => List(failedGenericRecord))
     implicit val inj = SpecificAvroCodecs[FiscalRecord] //passing wrong injection to produce incorrect bytes
     simulateSpecificRecordFailure
   }

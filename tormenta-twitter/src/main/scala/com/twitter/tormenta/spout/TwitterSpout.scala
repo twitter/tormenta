@@ -27,10 +27,10 @@ import java.util.concurrent.LinkedBlockingQueue
 import twitter4j._
 
 /**
-  * Storm Spout implementation for Twitter's streaming API.
-  *
-  * @author Sam Ritchie
-  */
+ * Storm Spout implementation for Twitter's streaming API.
+ *
+ * @author Sam Ritchie
+ */
 
 object TwitterSpout {
   val QUEUE_LIMIT = 1000 // default max queue size.
@@ -54,11 +54,11 @@ class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: Str
     def onStatus(status: Status) {
       queue.offer(status)
     }
-    def onDeletionNotice(notice: StatusDeletionNotice) { }
-    def onScrubGeo(userId: Long, upToStatusId: Long) { }
-    def onStallWarning(warning: StallWarning) { }
-    def onTrackLimitationNotice(numberOfLimitedStatuses: Int) { }
-    def onException(ex: Exception) { }
+    def onDeletionNotice(notice: StatusDeletionNotice) {}
+    def onScrubGeo(userId: Long, upToStatusId: Long) {}
+    def onStallWarning(warning: StallWarning) {}
+    def onTrackLimitationNotice(numberOfLimitedStatuses: Int) {}
+    def onException(ex: Exception) {}
   }
 
   override def getSpout = this
@@ -77,9 +77,9 @@ class TwitterSpout[+T](factory: TwitterStreamFactory, limit: Int, fieldName: Str
   }
 
   /**
-    * Override this to change the default spout behavior if poll
-    * returns an empty list.
-    */
+   * Override this to change the default spout behavior if poll
+   * returns an empty list.
+   */
   def onEmpty: Unit = Time.sleep(50)
 
   override def nextTuple {

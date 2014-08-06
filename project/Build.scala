@@ -4,6 +4,8 @@ import sbt._
 import Keys._
 import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
 import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform._
 
 object TormentaBuild extends Build {
 
@@ -11,7 +13,7 @@ object TormentaBuild extends Build {
   lazy val stormVersion = "0.9.0-wip15"
 
   val extraSettings =
-    Project.defaultSettings ++ mimaDefaultSettings
+    Project.defaultSettings ++ mimaDefaultSettings ++ scalariformSettings
 
   def ciSettings: Seq[Project.Setting[_]] =
     if (sys.env.getOrElse("TRAVIS", "false").toBoolean) Seq(
@@ -23,7 +25,7 @@ object TormentaBuild extends Build {
 
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
-    version := "0.7.0",
+    version := "0.8.0",
     scalaVersion := "2.9.3",
     crossScalaVersions := Seq("2.9.3", "2.10.0"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
@@ -90,6 +92,13 @@ object TormentaBuild extends Build {
       </developers>)
   )
 
+  lazy val formattingPreferences = {
+   import scalariform.formatter.preferences._
+   FormattingPreferences().
+     setPreference(AlignParameters, false).
+     setPreference(PreserveSpaceBeforeArguments, true)
+  }
+
   /**
     * This returns the youngest jar we released that is compatible
     * with the current.
@@ -99,7 +108,7 @@ object TormentaBuild extends Build {
   def youngestForwardCompatible(subProj: String) =
     Some(subProj)
       .filterNot(unreleasedModules.contains(_))
-      .map { s => "com.twitter" % ("tormenta-" + s + "_2.9.3") % "0.7.0" }
+      .map { s => "com.twitter" % ("tormenta-" + s + "_2.9.3") % "0.8.0" }
 
   lazy val tormenta = Project(
     id = "tormenta",
@@ -125,7 +134,10 @@ object TormentaBuild extends Build {
     )
   }
 
-  lazy val tormentaCore = module("core")
+  lazy val tormentaCore = module("core").settings(
+    libraryDependencies += "com.twitter" %% "chill" % "0.3.6"
+    exclude("com.esotericsoftware.kryo", "kryo")
+  )
 
   lazy val tormentaTwitter = module("twitter").settings(
     libraryDependencies += "org.twitter4j" % "twitter4j-stream" % "3.0.3"

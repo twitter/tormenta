@@ -47,7 +47,7 @@ trait BaseAvroProperties {
     }
 
   def isAvroRecordDecoded[A](implicit arba: Arbitrary[A], scheme: Scheme[A],
-                             inj: Injection[A, Array[Byte]], eqa: Equiv[A]) =
+    inj: Injection[A, Array[Byte]], eqa: Equiv[A]) =
     forAll {
       (a: A) =>
         val b = inj(a)
@@ -57,7 +57,7 @@ trait BaseAvroProperties {
     }
 
   def isAvroRecordNotDecoded[A](implicit arba: Arbitrary[A], scheme: Scheme[A],
-                                failedRecord: A, inj: Injection[A, Array[Byte]], eqa: Equiv[A]) =
+    failedRecord: A, inj: Injection[A, Array[Byte]], eqa: Equiv[A]) =
     forAll {
       (a: A) =>
         val b = inj(a)

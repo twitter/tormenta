@@ -18,13 +18,15 @@ package com.twitter.tormenta.spout
 
 import backtype.storm.spout.SpoutOutputCollector
 import backtype.storm.task.TopologyContext
-import backtype.storm.topology.OutputFieldsDeclarer
 import backtype.storm.topology.base.BaseRichSpout
-import backtype.storm.tuple.{Fields, Values}
+import backtype.storm.topology.IRichSpout
+import backtype.storm.topology.OutputFieldsDeclarer
+import backtype.storm.tuple.{ Fields, Values }
 import backtype.storm.utils.Time
-import java.util.{Map => JMap}
+import java.util.{ Map => JMap }
 
 trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
+
   var collector: SpoutOutputCollector = null
 
   override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
@@ -35,7 +37,7 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
       override def metricFactory = metrics :: self.metricFactory
     }
 
-  protected def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
+  def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
     collector = coll
@@ -45,17 +47,17 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
   def fieldName: String = "item"
 
   /**
-    * Override to supply new tuples.
-    */
+   * Override to supply new tuples.
+   */
   def poll: TraversableOnce[T]
 
   /**
-    * Override this to change the default spout behavior if poll
-    * returns an empty list.
-    */
+   * Override this to change the default spout behavior if poll
+   * returns an empty list.
+   */
   def onEmpty: Unit = Time.sleep(50)
 
-  override def getSpout = this
+  override def getSpout: IRichSpout = this
 
   override def flatMap[U](fn: T => TraversableOnce[U]) =
     new BaseSpout[U] {

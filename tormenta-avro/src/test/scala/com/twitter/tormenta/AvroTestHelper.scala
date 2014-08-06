@@ -17,7 +17,7 @@
 package com.twitter.tormenta
 
 import org.apache.avro.Schema
-import org.apache.avro.generic.{GenericData, GenericRecord}
+import org.apache.avro.generic.{ GenericData, GenericRecord }
 import avro.FiscalRecord
 
 /**
@@ -26,7 +26,7 @@ import avro.FiscalRecord
  */
 trait AvroTestHelper {
 
-  val testSchema = new Schema.Parser().parse( """{
+  val testSchema = new Schema.Parser().parse("""{
                                                    "type":"record",
                                                    "name":"FiscalRecord",
                                                    "namespace":"avro",
@@ -51,7 +51,6 @@ trait AvroTestHelper {
                                                       }
                                                    ]
                                                 }""")
-
 
   def buildGenericAvroRecord(i: (String, Int, Int)): GenericRecord = {
     val fiscalRecord = new GenericData.Record(testSchema)
