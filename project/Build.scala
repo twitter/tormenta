@@ -26,8 +26,8 @@ object TormentaBuild extends Build {
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
     version := "0.8.0",
-    scalaVersion := "2.9.3",
-    crossScalaVersions := Seq("2.9.3", "2.10.0"),
+    scalaVersion := "2.10.4",
+    crossScalaVersions := Seq("2.10.4"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
     libraryDependencies ++= Seq(
@@ -108,7 +108,7 @@ object TormentaBuild extends Build {
   def youngestForwardCompatible(subProj: String) =
     Some(subProj)
       .filterNot(unreleasedModules.contains(_))
-      .map { s => "com.twitter" % ("tormenta-" + s + "_2.9.3") % "0.8.0" }
+      .map { s => "com.twitter" % ("tormenta-" + s + "_2.10.4") % "0.8.0" }
 
   lazy val tormenta = Project(
     id = "tormenta",
@@ -154,7 +154,7 @@ object TormentaBuild extends Build {
   lazy val tormentaAvro = module("avro").settings(
     libraryDependencies ++= Seq(
       "org.apache.avro" % "avro" % "1.7.5",
-      "com.twitter" %% "bijection-core" % "0.6.0",
-      "com.twitter" %% "bijection-avro" % "0.6.0")
+      "com.twitter" %% "bijection-core" % "0.6.3",
+      "com.twitter" %% "bijection-avro" % "0.6.3")
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 }
