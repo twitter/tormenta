@@ -25,7 +25,7 @@ object TormentaBuild extends Build {
 
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
-    version := "0.9.0",
+    version := "0.8.0",
     scalaVersion := "2.10.4",
     crossScalaVersions := Seq("2.10.4", "2.11.2"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
