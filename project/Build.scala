@@ -33,8 +33,8 @@ object TormentaBuild extends Build {
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-api" % slf4jVersion,
       "storm" % "storm" % stormVersion % "provided",
-      "org.scalacheck" %% "scalacheck" % "1.11.5",
-      "org.scalatest" %% "scalatest" % "2.2.2"
+      "org.scalacheck" %% "scalacheck" % "1.11.5" % "test",
+      "org.scalatest" %% "scalatest" % "2.2.2" % "test"
     ),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-Yresolve-term-conflict:package"),
     resolvers ++= Seq(
