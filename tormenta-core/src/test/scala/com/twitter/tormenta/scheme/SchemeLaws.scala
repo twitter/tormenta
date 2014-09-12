@@ -16,10 +16,10 @@
 
 package com.twitter.tormenta.scheme
 
-import org.specs._
+import org.scalatest._
 import scala.collection.JavaConverters._
 
-object SchemeWithHandlerSpecification extends Specification {
+object SchemeWithHandlerSpecification extends WordSpec with Matchers {
   "Scheme should handle failure" should {
     "test failure" in {
       val f: Array[Byte] => List[String] = b => throw new IllegalArgumentException("decode failed")
@@ -27,8 +27,8 @@ object SchemeWithHandlerSpecification extends Specification {
       val schemeWithErrorHandler = Scheme(f).withHandler(t => List(t.getMessage))
       val result = schemeWithErrorHandler.deserialize("test string".getBytes("UTF-8"))
 
-      result.asScala.isEmpty mustBe false //test fails, returns an empty list
-      result.asScala.head.get(0) must_== "decode failed"
+      assert(result.asScala.isEmpty == false) //test fails, returns an empty list
+      assert(result.asScala.head.get(0) == "decode failed")
     }
   }
 }

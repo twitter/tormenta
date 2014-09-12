@@ -27,14 +27,14 @@ object TormentaBuild extends Build {
     organization := "com.twitter",
     version := "0.8.0",
     scalaVersion := "2.10.4",
-    crossScalaVersions := Seq("2.10.4"),
+    crossScalaVersions := Seq("2.10.4", "2.11.2"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-api" % slf4jVersion,
       "storm" % "storm" % stormVersion % "provided",
-      "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
-      "org.scala-tools.testing" %% "specs" % "1.6.9" % "test"
+      "org.scalacheck" %% "scalacheck" % "1.11.5" % "test",
+      "org.scalatest" %% "scalatest" % "2.2.2" % "test"
     ),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-Yresolve-term-conflict:package"),
     resolvers ++= Seq(
@@ -46,8 +46,14 @@ object TormentaBuild extends Build {
 
     parallelExecution in Test := false,
 
-    scalacOptions ++= Seq(Opts.compile.unchecked, Opts.compile.deprecation),
+    scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:implicitConversions", "-language:higherKinds", "-language:existentials"),
 
+    scalacOptions <++= (scalaVersion) map { sv =>
+        if (sv startsWith "2.10")
+          Seq("-Xdivergence211")
+        else
+          Seq()
+    },
     // Publishing options:
     publishMavenStyle := true,
 
@@ -135,7 +141,7 @@ object TormentaBuild extends Build {
   }
 
   lazy val tormentaCore = module("core").settings(
-    libraryDependencies += "com.twitter" %% "chill" % "0.3.6"
+    libraryDependencies += "com.twitter" %% "chill" % "0.5.0"
     exclude("com.esotericsoftware.kryo", "kryo")
   )
 
@@ -154,7 +160,7 @@ object TormentaBuild extends Build {
   lazy val tormentaAvro = module("avro").settings(
     libraryDependencies ++= Seq(
       "org.apache.avro" % "avro" % "1.7.5",
-      "com.twitter" %% "bijection-core" % "0.6.3",
-      "com.twitter" %% "bijection-avro" % "0.6.3")
+      "com.twitter" %% "bijection-core" % "0.7.0",
+      "com.twitter" %% "bijection-avro" % "0.7.0")
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 }

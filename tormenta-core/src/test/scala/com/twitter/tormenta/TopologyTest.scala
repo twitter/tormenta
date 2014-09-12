@@ -23,10 +23,10 @@ import com.twitter.tormenta.spout.Spout
 import backtype.storm.testing.CompleteTopologyParam
 import backtype.storm.tuple.Values
 import backtype.storm.Testing
-import org.specs._
+import org.scalatest._
 import scala.collection.JavaConverters._
 
-object TopologyTest extends Specification {
+class TopologyTest extends WordSpec with Matchers with BeforeAndAfter {
   val spout: Spout[Int] = Spout.fromTraversable(List(1, 2, 3, 4, 5))
 
   val builder = new TopologyBuilder
@@ -53,12 +53,12 @@ object TopologyTest extends Specification {
     "properly complete" in {
       val ret = Testing.completeTopology(localCluster, topo, completeTopologyParam)
       val spoutTuples = Testing.readTuples(ret, "1")
-      spoutTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) mustEqual List(1, 2, 3, 4, 5)
+      assert(spoutTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
 
       val countTuples = Testing.readTuples(ret, "2")
-      countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) mustEqual List(1, 2, 3, 4, 5)
+      assert(countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
     }
-    doLast {
+    after {
       Thread.sleep(1500) // Dealing with race condition until storm bugfix.
       localCluster.shutdown()
     }

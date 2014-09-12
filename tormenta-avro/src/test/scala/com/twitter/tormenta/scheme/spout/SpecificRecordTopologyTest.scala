@@ -16,7 +16,7 @@
 
 package com.twitter.tormenta.scheme.spout
 
-import org.specs.Specification
+import org.scalatest._
 import com.twitter.tormenta.AvroTestHelper
 import com.twitter.bijection.avro.SpecificAvroCodecs
 import com.twitter.tormenta.spout.{ TraversableSpout, Spout }
@@ -31,7 +31,7 @@ import scala.collection.JavaConverters._
  * @author Mansur Ashraf
  * @since 9/25/13
  */
-object SpecificRecordTopologyTest extends Specification with AvroTestHelper {
+object SpecificRecordTopologyTest extends WordSpec with Matchers with BeforeAndAfter with AvroTestHelper {
   val inj = SpecificAvroCodecs[FiscalRecord]
 
   val specificSpout: Spout[Array[Byte]] = TraversableSpout[FiscalRecord](List(
@@ -60,17 +60,17 @@ object SpecificRecordTopologyTest extends Specification with AvroTestHelper {
       val ret = Testing.completeTopology(localCluster, topo, completeTopologyParam)
       val spoutTuples = Testing.readTuples(ret, "1")
       val result = spoutTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)).map(b => inj.invert(b.asInstanceOf[Array[Byte]]).get)
-      result mustEqual List(
+      assert(result == List(
         buildSpecificAvroRecord("2010-01-01", 1, 1),
         buildSpecificAvroRecord("2010-02-02", 2, 2),
         buildSpecificAvroRecord("2010-04-03", 3, 3),
         buildSpecificAvroRecord("2010-04-04", 4, 4)
-      )
+      ))
 
       val countTuples = Testing.readTuples(ret, "2")
-      countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) mustEqual List(1, 2, 3, 4)
+      assert(countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4))
     }
-    doLast {
+    after {
       localCluster.shutdown()
     }
   }
