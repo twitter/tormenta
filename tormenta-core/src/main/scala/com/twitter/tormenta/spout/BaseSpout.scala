@@ -29,19 +29,23 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
 
   var collector: SpoutOutputCollector = null
 
-  override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
+  override def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], regFn: TopologyContext => Unit) =
     new BaseSpout[T] {
       override def fieldName = self.fieldName
       override def onEmpty = self.onEmpty
       override def poll = self.poll
       override def metricFactory = metrics :: self.metricFactory
+      override def regFn = (c: TopologyContext) => { regFn(c); self.regFn(c) }
     }
 
   def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
 
+  def regFn: (TopologyContext) => Unit = { (TopologyContext) => Unit }
+
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
     collector = coll
     metricFactory.foreach(mList => mList().foreach(_.register(context)))
+    regFn(context)
   }
 
   def fieldName: String = "item"
@@ -65,6 +69,7 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
       override def onEmpty = self.onEmpty
       override def poll = self.poll.flatMap(fn)
       override def metricFactory = self.metricFactory
+      override def regFn = self.regFn
     }
 
   override def nextTuple {

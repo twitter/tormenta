@@ -42,7 +42,7 @@ object Spout {
 trait Spout[+T] extends Serializable { self =>
   def getSpout: IRichSpout
 
-  def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) = self
+  def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], regFn: TopologyContext => Unit) = self
 
   def flatMap[U](fn: T => TraversableOnce[U]): Spout[U]
 

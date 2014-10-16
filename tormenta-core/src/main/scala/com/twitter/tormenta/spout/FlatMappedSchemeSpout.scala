@@ -18,6 +18,7 @@ package com.twitter.tormenta.spout
 
 import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
+import backtype.storm.task.TopologyContext
 
 /**
  * Spout that performs a flatMap operation on its contained
@@ -27,12 +28,15 @@ import com.twitter.tormenta.scheme.Scheme
 
 class FlatMappedSchemeSpout[-T, +U](spout: SchemeSpout[T])(fn: T => TraversableOnce[U])
     extends SchemeSpout[U] {
-  override def getSpout = spout.getSpout(_.flatMap(fn), metricFactory)
-  override def getSpout[R](transform: Scheme[U] => Scheme[R], metrics: List[() => TraversableOnce[Metric[_]]]) =
-    spout.getSpout(scheme => transform(scheme.flatMap(fn)), metrics)
+  override def getSpout = spout.getSpout(_.flatMap(fn), metricFactory, regFn)
+  override def getSpout[R](transform: Scheme[U] => Scheme[R],
+    metrics: List[() => TraversableOnce[Metric[_]]],
+    regFn: TopologyContext => Unit) =
+    spout.getSpout(scheme => transform(scheme.flatMap(fn)), metrics, regFn)
 
-  override def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) =
+  override def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], regFn: TopologyContext => Unit) =
     new FlatMappedSchemeSpout[T, U](spout)(fn) {
       override def metricFactory = metrics :: spout.metricFactory
+      override def regFn = (c: TopologyContext) => { regFn(c); spout.regFn(c) }
     }
 }

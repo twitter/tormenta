@@ -18,16 +18,19 @@ package com.twitter.tormenta.spout
 
 import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
+import backtype.storm.task.TopologyContext
 
 trait SchemeSpout[+T] extends BaseSpout[T] {
   /**
    * This is the only required override.
    */
-  def getSpout[R](transformer: Scheme[T] => Scheme[R], metrics: List[() => TraversableOnce[Metric[_]]]): IRichSpout
+  def getSpout[R](transformer: Scheme[T] => Scheme[R],
+    metrics: List[() => TraversableOnce[Metric[_]]],
+    regFn: TopologyContext => Unit): IRichSpout
 
   override def poll = List()
 
-  override def getSpout = getSpout(identity(_), metricFactory)
+  override def getSpout = getSpout(identity(_), metricFactory, regFn)
 
   override def flatMap[U](fn: T => TraversableOnce[U]): BaseSpout[U] =
     new FlatMappedSchemeSpout(this)(fn)
