@@ -34,9 +34,9 @@ class FlatMappedSchemeSpout[-T, +U](spout: SchemeSpout[T])(fn: T => TraversableO
     regFn: TopologyContext => Unit) =
     spout.getSpout(scheme => transform(scheme.flatMap(fn)), metrics, regFn)
 
-  override def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], regFn: TopologyContext => Unit) =
+  override def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], rf: TopologyContext => Unit) =
     new FlatMappedSchemeSpout[T, U](spout)(fn) {
       override def metricFactory = metrics :: spout.metricFactory
-      override def regFn = (c: TopologyContext) => { regFn(c); spout.regFn(c) }
+      override def regFn = (c: TopologyContext) => { rf(c); spout.regFn(c) }
     }
 }

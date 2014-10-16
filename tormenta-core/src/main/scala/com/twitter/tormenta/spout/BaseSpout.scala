@@ -29,13 +29,13 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
 
   var collector: SpoutOutputCollector = null
 
-  override def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], regFn: TopologyContext => Unit) =
+  override def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], rf: TopologyContext => Unit) =
     new BaseSpout[T] {
       override def fieldName = self.fieldName
       override def onEmpty = self.onEmpty
       override def poll = self.poll
       override def metricFactory = metrics :: self.metricFactory
-      override def regFn = (c: TopologyContext) => { regFn(c); self.regFn(c) }
+      override def regFn = (c: TopologyContext) => { rf(c); self.regFn(c) }
     }
 
   def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
