@@ -24,13 +24,11 @@ trait SchemeSpout[+T] extends BaseSpout[T] {
   /**
    * This is the only required override.
    */
-  def getSpout[R](transformer: Scheme[T] => Scheme[R],
-    metrics: List[() => TraversableOnce[Metric[_]]],
-    regFn: TopologyContext => Unit): IRichSpout
+  def getSpout[R](transformer: Scheme[T] => Scheme[R], fn: => TopologyContext => Unit): IRichSpout
 
   override def poll = List()
 
-  override def getSpout = getSpout(identity(_), metricFactory, regFn)
+  override def getSpout = getSpout(identity(_), callOnOpen)
 
   override def flatMap[U](fn: T => TraversableOnce[U]): BaseSpout[U] =
     new FlatMappedSchemeSpout(this)(fn)

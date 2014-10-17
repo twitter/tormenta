@@ -29,23 +29,19 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
 
   var collector: SpoutOutputCollector = null
 
-  override def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], rf: TopologyContext => Unit) =
+  override def openHook(f: => TopologyContext => Unit) =
     new BaseSpout[T] {
       override def fieldName = self.fieldName
       override def onEmpty = self.onEmpty
       override def poll = self.poll
-      override def metricFactory = metrics :: self.metricFactory
-      override def regFn = (c: TopologyContext) => { rf(c); self.regFn(c) }
+      override def callOnOpen = (c: TopologyContext) => { f(c); self.callOnOpen(c) }
     }
 
-  def metricFactory: List[() => TraversableOnce[Metric[_]]] = List()
-
-  def regFn: (TopologyContext) => Unit = { (TopologyContext) => Unit }
+  def callOnOpen: (TopologyContext) => Unit = { (TopologyContext) => Unit }
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
+    callOnOpen(context)
     collector = coll
-    metricFactory.foreach(mList => mList().foreach(_.register(context)))
-    regFn(context)
   }
 
   def fieldName: String = "item"
@@ -68,8 +64,7 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
       override def fieldName = self.fieldName
       override def onEmpty = self.onEmpty
       override def poll = self.poll.flatMap(fn)
-      override def metricFactory = self.metricFactory
-      override def regFn = self.regFn
+      override def callOnOpen = self.callOnOpen
     }
 
   override def nextTuple {

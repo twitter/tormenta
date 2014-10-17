@@ -29,7 +29,6 @@ import backtype.storm.task.TopologyContext
 class KestrelSpout[+T](scheme: Scheme[T], hosts: List[String], name: String, port: Int = 2229)
     extends SchemeSpout[T] {
   override def getSpout[R](transformer: Scheme[T] => Scheme[R],
-    metrics: List[() => TraversableOnce[Metric[_]]],
-    regFn: TopologyContext => Unit) =
-    new RichStormSpout(new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme)), metrics, regFn)
+    callOnOpen: => TopologyContext => Unit) =
+      new RichStormSpout(new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme)), callOnOpen)
 }

@@ -28,15 +28,12 @@ import backtype.storm.task.TopologyContext
 
 class FlatMappedSchemeSpout[-T, +U](spout: SchemeSpout[T])(fn: T => TraversableOnce[U])
     extends SchemeSpout[U] {
-  override def getSpout = spout.getSpout(_.flatMap(fn), metricFactory, regFn)
-  override def getSpout[R](transform: Scheme[U] => Scheme[R],
-    metrics: List[() => TraversableOnce[Metric[_]]],
-    regFn: TopologyContext => Unit) =
-    spout.getSpout(scheme => transform(scheme.flatMap(fn)), metrics, regFn)
+  override def getSpout = spout.getSpout(_.flatMap(fn), callOnOpen)
+  override def getSpout[R](transform: Scheme[U] => Scheme[R], f: => TopologyContext => Unit) =
+    spout.getSpout(scheme => transform(scheme.flatMap(fn)), f)
 
-  override def registerMetricHandlers(metrics: () => TraversableOnce[Metric[_]], rf: TopologyContext => Unit) =
+  override def openHook(f: => TopologyContext => Unit) =
     new FlatMappedSchemeSpout[T, U](spout)(fn) {
-      override def metricFactory = metrics :: spout.metricFactory
-      override def regFn = (c: TopologyContext) => { rf(c); spout.regFn(c) }
+      override def callOnOpen = (c: TopologyContext) => { f(c); spout.callOnOpen(c) }
     }
 }
