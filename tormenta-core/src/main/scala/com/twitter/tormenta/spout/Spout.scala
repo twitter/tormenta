@@ -42,7 +42,11 @@ object Spout {
 trait Spout[+T] extends Serializable { self =>
   def getSpout: IRichSpout
 
-  def registerMetrics(metrics: () => TraversableOnce[Metric[_]]) = self
+  /**
+   * Passes metrics to register with storm and a function to run on the storm runtime context
+   *  when the spout is opened.
+   */
+  def openHook(fn: => TopologyContext => Unit) = self
 
   def flatMap[U](fn: T => TraversableOnce[U]): Spout[U]
 

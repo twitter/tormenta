@@ -32,11 +32,11 @@ trait SpoutProxy extends IRichSpout with Proxied[IRichSpout] with Serializable {
 }
 
 class RichStormSpout(val self: IRichSpout,
-    @transient metrics: List[() => TraversableOnce[Metric[_]]]) extends SpoutProxy {
-  val lockedMetrics = Externalizer(metrics)
+    @transient callOnOpen: (TopologyContext) => Unit) extends SpoutProxy {
+  val lockedFn = Externalizer(callOnOpen)
 
   override def open(conf: JMap[_, _], context: TopologyContext, coll: SpoutOutputCollector) {
-    lockedMetrics.get.foreach(mList => mList().foreach(_.register(context)))
+    lockedFn.get(context)
     self.open(conf, context, coll)
   }
 }

@@ -18,6 +18,7 @@ package com.twitter.tormenta.spout
 
 import com.twitter.tormenta.scheme.Scheme
 import storm.kafka.{ KafkaSpout => StormKafkaSpout, KafkaConfig, SpoutConfig }
+import backtype.storm.task.TopologyContext
 
 /**
  *  @author Oscar Boykin
@@ -26,7 +27,7 @@ import storm.kafka.{ KafkaSpout => StormKafkaSpout, KafkaConfig, SpoutConfig }
 
 class KafkaSpout[+T](scheme: Scheme[T], zkHost: String, brokerZkPath: String, topic: String, appID: String, zkRoot: String, forceStartOffsetTime: Int = -1)
     extends SchemeSpout[T] {
-  override def getSpout[R](transformer: Scheme[T] => Scheme[R], metrics: List[() => TraversableOnce[Metric[_]]]) = {
+  override def getSpout[R](transformer: Scheme[T] => Scheme[R], callOnOpen: => TopologyContext => Unit) = {
     // Spout ID needs to be unique per spout, so create that string by taking the topic and appID.
     val spoutId = topic + appID
     val spoutConfig = new SpoutConfig(new KafkaConfig.ZkHosts(zkHost, brokerZkPath), topic, zkRoot, spoutId)
@@ -34,6 +35,6 @@ class KafkaSpout[+T](scheme: Scheme[T], zkHost: String, brokerZkPath: String, to
     spoutConfig.scheme = transformer(scheme)
     spoutConfig.forceStartOffsetTime(forceStartOffsetTime)
 
-    new RichStormSpout(new StormKafkaSpout(spoutConfig), metrics)
+    new RichStormSpout(new StormKafkaSpout(spoutConfig), callOnOpen)
   }
 }

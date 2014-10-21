@@ -19,6 +19,7 @@ package com.twitter.tormenta.spout
 import backtype.storm.spout.KestrelThriftSpout
 import com.twitter.tormenta.scheme.Scheme
 import scala.collection.JavaConverters._
+import backtype.storm.task.TopologyContext
 
 /**
  *  @author Oscar Boykin
@@ -27,6 +28,7 @@ import scala.collection.JavaConverters._
 
 class KestrelSpout[+T](scheme: Scheme[T], hosts: List[String], name: String, port: Int = 2229)
     extends SchemeSpout[T] {
-  override def getSpout[R](transformer: Scheme[T] => Scheme[R], metrics: List[() => TraversableOnce[Metric[_]]]) =
-    new RichStormSpout(new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme)), metrics)
+  override def getSpout[R](transformer: Scheme[T] => Scheme[R],
+    callOnOpen: => TopologyContext => Unit) =
+      new RichStormSpout(new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme)), callOnOpen)
 }
