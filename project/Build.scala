@@ -9,8 +9,17 @@ import com.typesafe.sbt.SbtScalariform._
 
 object TormentaBuild extends Build {
 
-  lazy val slf4jVersion = "1.6.6"
-  lazy val stormVersion = "0.9.0-wip15"
+  val algebirdVersion = "0.8.2"
+  val avroVersion = "1.7.5"
+  val bijectionVersion = "0.7.0"
+  val chillVersion = "0.5.1"
+  val scalaCheckVersion = "1.11.5"
+  val scalaTestVersion = "2.2.2"
+  val slf4jVersion = "1.6.6"
+  val stormKafkaVersion = "0.9.0-wip6-scala292-multischeme"
+  val stormKestrelVersion = "0.9.0-wip5-multischeme"
+  val stormVersion = "0.9.0-wip15"
+  val twitter4jVersion = "3.0.3"
 
   val extraSettings =
     Project.defaultSettings ++ mimaDefaultSettings ++ scalariformSettings
@@ -33,8 +42,8 @@ object TormentaBuild extends Build {
     libraryDependencies ++= Seq(
       "org.slf4j" % "slf4j-api" % slf4jVersion,
       "storm" % "storm" % stormVersion % "provided",
-      "org.scalacheck" %% "scalacheck" % "1.11.5" % "test",
-      "org.scalatest" %% "scalatest" % "2.2.2" % "test"
+      "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test",
+      "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
     ),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-Yresolve-term-conflict:package"),
     resolvers ++= Seq(
@@ -141,26 +150,26 @@ object TormentaBuild extends Build {
   }
 
   lazy val tormentaCore = module("core").settings(
-    libraryDependencies += "com.twitter" %% "chill" % "0.5.0"
+    libraryDependencies += "com.twitter" %% "chill" % chillVersion
     exclude("com.esotericsoftware.kryo", "kryo")
   )
 
   lazy val tormentaTwitter = module("twitter").settings(
-    libraryDependencies += "org.twitter4j" % "twitter4j-stream" % "3.0.3"
+    libraryDependencies += "org.twitter4j" % "twitter4j-stream" % twitter4jVersion
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 
   lazy val tormentaKafka = module("kafka").settings(
-    libraryDependencies += "storm" % "storm-kafka" % "0.9.0-wip6-scala292-multischeme"
+    libraryDependencies += "storm" % "storm-kafka" % stormKafkaVersion
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 
   lazy val tormentaKestrel = module("kestrel").settings(
-    libraryDependencies += "storm" % "storm-kestrel" % "0.9.0-wip5-multischeme"
+    libraryDependencies += "storm" % "storm-kestrel" % stormKestrelVersion
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 
   lazy val tormentaAvro = module("avro").settings(
     libraryDependencies ++= Seq(
-      "org.apache.avro" % "avro" % "1.7.5",
-      "com.twitter" %% "bijection-core" % "0.7.0",
-      "com.twitter" %% "bijection-avro" % "0.7.0")
+      "org.apache.avro" % "avro" % avroVersion,
+      "com.twitter" %% "bijection-core" % bijectionVersion,
+      "com.twitter" %% "bijection-avro" % bijectionVersion)
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 }

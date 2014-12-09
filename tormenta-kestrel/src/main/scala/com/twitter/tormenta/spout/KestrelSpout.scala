@@ -30,5 +30,5 @@ class KestrelSpout[+T](scheme: Scheme[T], hosts: List[String], name: String, por
     extends SchemeSpout[T] {
   override def getSpout[R](transformer: Scheme[T] => Scheme[R],
     callOnOpen: => TopologyContext => Unit) =
-      new RichStormSpout(new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme)), callOnOpen)
+    new RichStormSpout(new KestrelThriftSpout(hosts.asJava, port, name, transformer(scheme)), callOnOpen)
 }
