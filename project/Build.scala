@@ -9,10 +9,9 @@ import com.typesafe.sbt.SbtScalariform._
 
 object TormentaBuild extends Build {
 
-  val algebirdVersion = "0.8.2"
   val avroVersion = "1.7.5"
-  val bijectionVersion = "0.7.0"
-  val chillVersion = "0.5.1"
+  val bijectionVersion = "0.7.2"
+  val chillVersion = "0.5.2"
   val scalaCheckVersion = "1.11.5"
   val scalaTestVersion = "2.2.2"
   val slf4jVersion = "1.6.6"
