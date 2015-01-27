@@ -122,7 +122,7 @@ object TormentaBuild extends Build {
   def youngestForwardCompatible(subProj: String) =
     Some(subProj)
       .filterNot(unreleasedModules.contains(_))
-      .map { s => "com.twitter" % ("tormenta-" + s + "_2.10.4") % "0.8.0" }
+      .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.8.0" }
 
   lazy val tormenta = Project(
     id = "tormenta",
