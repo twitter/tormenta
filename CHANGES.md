@@ -1,5 +1,11 @@
 # tormenta #
 
+### Version 0.9.0 ###
+* Update to scala 2.10 https://github.com/twitter/tormenta/pull/57
+* Scala211 upgrades https://github.com/twitter/tormenta/pull/58
+* Spout to accept a metric registration function https://github.com/twitter/tormenta/pull/60
+* Re-order 3rdparty dependencies https://github.com/twitter/tormenta/pull/61
+
 ### Version 0.8.0 ###
 * Use scalainform: https://github.com/twitter/tormenta/pull/54
 * Modifications to Spout code to allow for metric registration: https://github.com/twitter/tormenta/pull/53
