@@ -23,7 +23,8 @@ import com.twitter.tormenta.spout.TraversableSpout
 import backtype.storm.testing.CompleteTopologyParam
 import backtype.storm.tuple.Values
 import backtype.storm.Testing
-import org.specs._
+
+import org.scalatest._
 import scala.collection.JavaConverters._
 import com.twitter.tormenta.AvroTestHelper
 import com.twitter.bijection.avro.GenericAvroCodecs
@@ -34,7 +35,7 @@ import org.apache.avro.generic.GenericRecord
  * @since 9/25/13
  */
 
-object GenericRecordTopologyTest extends Specification with AvroTestHelper {
+object GenericRecordTopologyTest extends WordSpec with Matchers with BeforeAndAfter with AvroTestHelper {
   val inj = GenericAvroCodecs[GenericRecord](testSchema)
 
   val genericSpout = TraversableSpout[GenericRecord](List(
@@ -63,18 +64,18 @@ object GenericRecordTopologyTest extends Specification with AvroTestHelper {
       val ret = Testing.completeTopology(localCluster, topo, completeTopologyParam)
       val spoutTuples = Testing.readTuples(ret, "1")
       val result1 = spoutTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)).map(b => inj.invert(b.asInstanceOf[Array[Byte]]).get)
-      result1 mustEqual List(
+      assert(result1 == List(
         buildGenericAvroRecord("2010-01-01", 1, 1),
         buildGenericAvroRecord("2010-02-02", 2, 2),
         buildGenericAvroRecord("2010-04-03", 3, 3),
         buildGenericAvroRecord("2010-04-04", 4, 4)
-      )
+      ))
 
       val countTuples = Testing.readTuples(ret, "2")
-      countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) mustEqual List(1, 2, 3, 4)
+      assert(countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4))
 
     }
-    doLast {
+    after {
       localCluster.shutdown()
     }
   }
