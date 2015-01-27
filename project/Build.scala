@@ -35,7 +35,7 @@ object TormentaBuild extends Build {
     organization := "com.twitter",
     version := "0.8.0",
     scalaVersion := "2.10.4",
-    crossScalaVersions := Seq("2.10.4", "2.11.2"),
+    crossScalaVersions := Seq("2.10.4", "2.11.5"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
     libraryDependencies ++= Seq(
