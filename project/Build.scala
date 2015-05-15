@@ -10,8 +10,8 @@ import com.typesafe.sbt.SbtScalariform._
 object TormentaBuild extends Build {
 
   val avroVersion = "1.7.5"
-  val bijectionVersion = "0.7.2"
-  val chillVersion = "0.5.2"
+  val bijectionVersion = "0.8.0"
+  val chillVersion = "0.6.0"
   val scalaCheckVersion = "1.11.5"
   val scalaTestVersion = "2.2.2"
   val slf4jVersion = "1.6.6"
@@ -34,8 +34,8 @@ object TormentaBuild extends Build {
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
     version := "0.9.0",
-    scalaVersion := "2.10.4",
-    crossScalaVersions := Seq("2.10.4", "2.11.5"),
+    scalaVersion := "2.10.5",
+    crossScalaVersions := Seq("2.10.5", "2.11.5"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
     libraryDependencies ++= Seq(
