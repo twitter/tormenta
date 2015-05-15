@@ -1,5 +1,8 @@
 # tormenta #
 
+### Version 0.10.0 ###
+* bijection 0.8.0, chill 0.6.0, scala 2.10.5 #65
+
 ### Version 0.9.0 ###
 * Update to scala 2.10 https://github.com/twitter/tormenta/pull/57
 * Scala211 upgrades https://github.com/twitter/tormenta/pull/58
