@@ -37,17 +37,17 @@ Discussion occurs primarily on the [Tormenta mailing list](https://groups.google
 
 ## Maven
 
-Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.6.1`.
+Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.11.0`.
 
 Current published artifacts are
 
-* `tormenta-core_2.9.3`
+* `tormenta-core_2.11`
 * `tormenta-core_2.10`
-* `tormenta-kafka_2.9.3`
+* `tormenta-kafka_2.11`
 * `tormenta-kafka_2.10`
-* `tormenta-kestrel_2.9.3`
+* `tormenta-kestrel_2.11`
 * `tormenta-kestrel_2.10`
-* `tormenta-twitter_2.9.3`
+* `tormenta-twitter_2.11`
 * `tormenta-twitter_2.10`
 
 The suffix denotes the scala version.
@@ -59,6 +59,6 @@ The suffix denotes the scala version.
 
 ## License
 
-Copyright 2012 Twitter, Inc.
+Copyright 2015 Twitter, Inc.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

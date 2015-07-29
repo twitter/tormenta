@@ -1,6 +1,9 @@
 # tormenta #
 
 ### Version 0.10.0 ###
+* Bumps to upstream versions
+
+### Version 0.10.0 ###
 * bijection 0.8.0, chill 0.6.0, scala 2.10.5 #65
 
 ### Version 0.9.0 ###
