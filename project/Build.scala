@@ -10,8 +10,8 @@ import com.typesafe.sbt.SbtScalariform._
 object TormentaBuild extends Build {
 
   val avroVersion = "1.7.5"
-  val bijectionVersion = "0.8.0"
-  val chillVersion = "0.6.0"
+  val bijectionVersion = "0.8.1"
+  val chillVersion = "0.7.0"
   val scalaCheckVersion = "1.11.5"
   val scalaTestVersion = "2.2.2"
   val slf4jVersion = "1.6.6"
@@ -33,9 +33,8 @@ object TormentaBuild extends Build {
 
   val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     organization := "com.twitter",
-    version := "0.10.0",
     scalaVersion := "2.10.5",
-    crossScalaVersions := Seq("2.10.5", "2.11.5"),
+    crossScalaVersions := Seq("2.10.5", "2.11.7"),
     javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
     javacOptions in doc := Seq("-source", "1.6"),
     libraryDependencies ++= Seq(
@@ -122,7 +121,7 @@ object TormentaBuild extends Build {
   def youngestForwardCompatible(subProj: String) =
     Some(subProj)
       .filterNot(unreleasedModules.contains(_))
-      .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.10.0" }
+      .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.11.0" }
 
   lazy val tormenta = Project(
     id = "tormenta",
