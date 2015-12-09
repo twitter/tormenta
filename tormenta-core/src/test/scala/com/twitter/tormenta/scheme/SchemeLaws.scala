@@ -23,10 +23,14 @@ class SchemeWithHandlerSpecification extends WordSpec with Matchers {
   "Scheme" should {
     val f: Array[Byte] => List[String] = b => throw new IllegalArgumentException("decode failed")
 
-    def checkResult[T](scheme: Scheme[T], expectedResult: T) {
+    def eqv[T, U](t: T, u: U)(implicit ev: U =:= T): Boolean = (t == u)
+
+    def checkResult[T](scheme: Scheme[T], expectedResult: List[T]) {
       val result = scheme.deserialize("test string".getBytes("UTF-8"))
       assert(result.asScala.isEmpty == false) //test fails, returns an empty list
-      assert(result.asScala.toList.map(_.get(0)) == expectedResult)
+      assert {
+        eqv(result.asScala.toList.map(_.get(0).asInstanceOf[T]), expectedResult)
+      }
     }
 
     val schemeWithErrorHandler = Scheme(f).withHandler(t => List(t.getMessage))
