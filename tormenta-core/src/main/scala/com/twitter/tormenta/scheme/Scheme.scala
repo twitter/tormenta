@@ -59,12 +59,15 @@ trait Scheme[+T] extends MultiScheme with Serializable { self =>
 
   def filter(fn: T => Boolean): Scheme[T] =
     Scheme(self.decode(_).filter(fn))
+      .withHandler(self.handle(_).filter(fn))
 
   def map[R](fn: T => R): Scheme[R] =
     Scheme(self.decode(_).map(fn))
+      .withHandler(self.handle(_).map(fn))
 
   def flatMap[R](fn: T => TraversableOnce[R]): Scheme[R] =
     Scheme(self.decode(_).flatMap(fn))
+      .withHandler(self.handle(_).flatMap(fn))
 
   private def cast(t: Any): JList[AnyRef] = new Values(t.asInstanceOf[AnyRef])
   private def toJava(items: TraversableOnce[Any]) =
