@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 Twitter inc.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package tormenta
 
 import sbt._
@@ -135,6 +151,7 @@ object TormentaBuild extends Build {
     tormentaCore,
     tormentaKestrel,
     tormentaKafka,
+    tormentaKafka08,
     tormentaTwitter,
     tormentaAvro
   )
@@ -158,6 +175,11 @@ object TormentaBuild extends Build {
 
   lazy val tormentaKafka = module("kafka").settings(
     libraryDependencies += "storm" % "storm-kafka" % stormKafkaVersion
+  ).dependsOn(tormentaCore % "test->test;compile->compile")
+
+  lazy val tormentaKafka08 = module("kafka-08").settings(
+    // see http://stackoverflow.com/questions/23485191 for the reasoning behind explicit url
+    libraryDependencies ++= Seq("net.wurstmeister.storm" % "storm-kafka-0.8-plus" % "0.4.0" from "https://clojars.org/repo/net/wurstmeister/storm/storm-kafka-0.8-plus/0.4.0/storm-kafka-0.8-plus-0.4.0.jar")
   ).dependsOn(tormentaCore % "test->test;compile->compile")
 
   lazy val tormentaKestrel = module("kestrel").settings(
