@@ -37,7 +37,7 @@ Discussion occurs primarily on the [Tormenta mailing list](https://groups.google
 
 ## Maven
 
-Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.11.0`.
+Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.11.1`.
 
 Current published artifacts are
 
