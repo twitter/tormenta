@@ -7,7 +7,7 @@ import tormenta._
 
 val avroVersion = "1.7.5"
 val bijectionVersion = "0.9.0"
-val chillVersion = "0.7.0"
+val chillVersion = "0.7.3"
 val scalaCheckVersion = "1.12.2"
 val scalaTestVersion = "2.2.4"
 val slf4jVersion = "1.6.6"

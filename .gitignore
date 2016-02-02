@@ -1,6 +1,6 @@
 *.class
 *.log
-
+sonatype.sbt
 # sbt specific
 dist/*
 target/

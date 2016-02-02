@@ -1,7 +1,8 @@
 # tormenta #
 
-### Version 0.11.0 ###
+### Version 0.11.1 ###
 
+* Update the build: https://github.com/twitter/tormenta/pull/67
 * handlers now survive map, filter, flatMap https://github.com/twitter/tormenta/pull/66
 
 ### Version 0.10.0 ###
