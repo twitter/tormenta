@@ -27,13 +27,26 @@ topologyBuilder.setSpout("spoutName", spout.getSpout, 10)
 
 Now you're cooking with gas.
 
-## Community and Documentation
+## Documentation
 
 To learn more and find links to tutorials and information around the web, check out the [Tormenta Wiki](https://github.com/twitter/tormenta/wiki).
 
 The latest ScalaDocs are hosted on Tormenta's [Github Project Page](http://twitter.github.io/tormenta).
 
+## Contact
+
 Discussion occurs primarily on the [Tormenta mailing list](https://groups.google.com/forum/#!forum/tormenta-user). Issues should be reported on the [GitHub issue tracker](https://github.com/twitter/tormenta/issues).
+
+## Get Involved + Code of Conduct
+Pull requests and bug reports are always welcome!
+
+We use a lightweight form of project governence inspired by the one used by Apache projects.
+Please see [Contributing and Committership](https://github.com/twitter/analytics-infra-governance#contributing-and-committership) for our code of conduct and our pull request review process.
+The TL;DR is send us a pull request, iterate on the feedback + discussion, and get a +1 from a [Committer](COMMITTERS.md) in order to get your PR accepted.
+
+The current list of active committers (who can +1 a pull request) can be found here: [Committers](COMMITTERS.md)
+
+A list of contributors to the project can be found here: [Contributors](https://github.com/twitter/tormenta/graphs/contributors)
 
 ## Maven
 
