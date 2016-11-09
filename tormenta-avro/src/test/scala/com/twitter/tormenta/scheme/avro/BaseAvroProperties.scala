@@ -24,6 +24,7 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.avro.specific.SpecificRecordBase
 import scala.collection.JavaConverters._
 import com.twitter.tormenta.scheme.Scheme
+import java.nio.ByteBuffer
 
 /**
  * @author Mansur Ashraf
@@ -51,7 +52,7 @@ trait BaseAvroProperties {
     forAll {
       (a: A) =>
         val b = inj(a)
-        val deserialize = scheme.deserialize(b)
+        val deserialize = scheme.deserialize(ByteBuffer.wrap(b))
         val c = deserialize.asScala
         !c.isEmpty && c.size == 1 && eqa.equiv(c.head.get(0).asInstanceOf[A], a)
     }
@@ -61,7 +62,7 @@ trait BaseAvroProperties {
     forAll {
       (a: A) =>
         val b = inj(a)
-        val c = scheme.deserialize(b).asScala
+        val c = scheme.deserialize(ByteBuffer.wrap(b)).asScala
         !c.isEmpty && c.size == 1 && eqa.equiv(c.head.get(0).asInstanceOf[A], failedRecord)
     }
 }

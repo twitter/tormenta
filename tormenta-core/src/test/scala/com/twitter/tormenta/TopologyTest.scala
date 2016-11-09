@@ -16,13 +16,14 @@
 
 package com.twitter.tormenta
 
-import backtype.storm.topology.TopologyBuilder
-import backtype.storm.testing.{ MockedSources, TestGlobalCount, CompletableSpout }
-import backtype.storm.LocalCluster
+import org.apache.storm.topology.TopologyBuilder
+import org.apache.storm.testing.{ MockedSources, TestGlobalCount }
+import org.apache.storm.LocalCluster
 import com.twitter.tormenta.spout.Spout
-import backtype.storm.testing.CompleteTopologyParam
-import backtype.storm.tuple.Values
-import backtype.storm.Testing
+import org.apache.storm.testing.CompleteTopologyParam
+import org.apache.storm.tuple.Values
+import org.apache.storm.Testing
+import org.apache.storm.utils.Time
 import org.scalatest._
 import scala.collection.JavaConverters._
 
@@ -30,7 +31,6 @@ class TopologyTest extends WordSpec with Matchers with BeforeAndAfter {
   val spout: Spout[Int] = Spout.fromTraversable(List(1, 2, 3, 4, 5))
 
   val builder = new TopologyBuilder
-  val localCluster = new LocalCluster
   val completeTopologyParam = {
     val ret = new CompleteTopologyParam()
     ret.setMockedSources(new MockedSources)
@@ -48,6 +48,7 @@ class TopologyTest extends WordSpec with Matchers with BeforeAndAfter {
   //
   // So use this instead:
   "Complete Topology" should {
+    Time.startSimulating()
     val localCluster = new LocalCluster
 
     "properly complete" in {
@@ -58,9 +59,10 @@ class TopologyTest extends WordSpec with Matchers with BeforeAndAfter {
       val countTuples = Testing.readTuples(ret, "2")
       assert(countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
     }
+
     after {
-      Thread.sleep(1500) // Dealing with race condition until storm bugfix.
       localCluster.shutdown()
+      Time.stopSimulating()
     }
   }
 }

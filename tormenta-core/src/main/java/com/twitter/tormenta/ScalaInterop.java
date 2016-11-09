@@ -26,10 +26,10 @@ package com.twitter.tormenta;
  */
 public class ScalaInterop {
   protected ScalaInterop() { }
-  public static backtype.storm.drpc.DRPCSpout makeDRPC(String function) {
-    return new backtype.storm.drpc.DRPCSpout(function);
+  public static org.apache.storm.drpc.DRPCSpout makeDRPC(String function) {
+    return new org.apache.storm.drpc.DRPCSpout(function);
   }
-  public static storm.trident.Stream newDRPCStream(storm.trident.TridentTopology top,
+  public static org.apache.storm.trident.Stream newDRPCStream(org.apache.storm.trident.TridentTopology top,
     String streamName) {
     return top.newDRPCStream(streamName);
   }

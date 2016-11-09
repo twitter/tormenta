@@ -20,10 +20,10 @@ import org.scalatest._
 import com.twitter.tormenta.AvroTestHelper
 import com.twitter.bijection.avro.SpecificAvroCodecs
 import com.twitter.tormenta.spout.{ TraversableSpout, Spout }
-import backtype.storm.topology.TopologyBuilder
-import backtype.storm.{ Testing, LocalCluster }
-import backtype.storm.testing.{ TestGlobalCount, MockedSources, CompleteTopologyParam }
-import backtype.storm.tuple.Values
+import org.apache.storm.topology.TopologyBuilder
+import org.apache.storm.{ Testing, LocalCluster }
+import org.apache.storm.testing.{ TestGlobalCount, MockedSources, CompleteTopologyParam }
+import org.apache.storm.tuple.Values
 import avro.FiscalRecord
 import scala.collection.JavaConverters._
 

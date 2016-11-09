@@ -17,8 +17,8 @@ limitations under the License.
 package com.twitter.tormenta.spout
 
 import com.twitter.tormenta.scheme.Scheme
-import storm.kafka.{ KafkaSpout => StormKafkaSpout, KafkaConfig, SpoutConfig }
-import backtype.storm.task.TopologyContext
+import org.apache.storm.kafka.{ SpoutConfig, ZkHosts, KafkaSpout => StormKafkaSpout }
+import org.apache.storm.task.TopologyContext
 
 /**
  *  @author Oscar Boykin
@@ -30,10 +30,12 @@ class KafkaSpout[+T](scheme: Scheme[T], zkHost: String, brokerZkPath: String, to
   override def getSpout[R](transformer: Scheme[T] => Scheme[R], callOnOpen: => TopologyContext => Unit) = {
     // Spout ID needs to be unique per spout, so create that string by taking the topic and appID.
     val spoutId = topic + appID
-    val spoutConfig = new SpoutConfig(new KafkaConfig.ZkHosts(zkHost, brokerZkPath), topic, zkRoot, spoutId)
+    val spoutConfig = new SpoutConfig(new ZkHosts(zkHost, brokerZkPath), topic, zkRoot, spoutId)
 
     spoutConfig.scheme = transformer(scheme)
-    spoutConfig.forceStartOffsetTime(forceStartOffsetTime)
+    if (forceStartOffsetTime != -1) {
+      spoutConfig.startOffsetTime = forceStartOffsetTime
+    }
 
     new RichStormSpout(new StormKafkaSpout(spoutConfig), callOnOpen)
   }

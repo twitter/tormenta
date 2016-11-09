@@ -22,6 +22,7 @@ import com.twitter.bijection.avro.GenericAvroCodecs
 import com.twitter.bijection.Injection.connect
 import com.twitter.tormenta.scheme.avro.AvroScheme
 import com.twitter.tormenta.scheme.Scheme
+import java.nio.ByteBuffer
 
 /**
  * @author Mansur Ashraf
@@ -32,9 +33,9 @@ object GenericAvroScheme {
 }
 
 class GenericAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
-  def decode(bytes: Array[Byte]): TraversableOnce[T] = {
+  def decode(buffer: ByteBuffer): TraversableOnce[T] = {
     implicit val inj = GenericAvroCodecs[T](schema)
-    decodeRecord(bytes)
+    decodeRecord(buffer)
   }
 }
 
@@ -43,9 +44,9 @@ object BinaryAvroScheme {
 }
 
 class BinaryAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
-  def decode(bytes: Array[Byte]): TraversableOnce[T] = {
+  def decode(buffer: ByteBuffer): TraversableOnce[T] = {
     implicit val inj = GenericAvroCodecs.toBinary[T](schema)
-    decodeRecord(bytes)
+    decodeRecord(buffer)
   }
 }
 
@@ -54,10 +55,10 @@ object JsonAvroScheme {
 }
 
 class JsonAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
-  def decode(bytes: Array[Byte]): TraversableOnce[T] = {
+  def decode(buffer: ByteBuffer): TraversableOnce[T] = {
     implicit val avroInj = GenericAvroCodecs.toJson[T](schema)
     implicit val inj = connect[T, String, Array[Byte]]
-    decodeRecord(bytes)
+    decodeRecord(buffer)
   }
 }
 

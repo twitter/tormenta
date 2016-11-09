@@ -11,9 +11,7 @@ val chillVersion = "0.7.3"
 val scalaCheckVersion = "1.12.2"
 val scalaTestVersion = "2.2.4"
 val slf4jVersion = "1.6.6"
-val stormKafkaVersion = "0.9.0-wip6-scala292-multischeme"
-val stormKestrelVersion = "0.9.0-wip5-multischeme"
-val stormVersion = "0.9.0-wip15"
+val stormVersion = "1.0.2"
 val twitter4jVersion = "3.0.3"
 
 val extraSettings =
@@ -35,16 +33,14 @@ val sharedSettings = extraSettings ++ ciSettings ++ Seq(
   javacOptions in doc := Seq("-source", "1.6"),
   libraryDependencies ++= Seq(
     "org.slf4j" % "slf4j-api" % slf4jVersion,
-    "storm" % "storm" % stormVersion % "provided",
+    "org.apache.storm" % "storm-core" % stormVersion % "provided",
     "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test",
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
   ),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-Yresolve-term-conflict:package"),
   resolvers ++= Seq(
     Opts.resolver.sonatypeSnapshots,
-    Opts.resolver.sonatypeReleases,
-    "Clojars Repository" at "http://clojars.org/repo",
-    "Conjars Repository" at "http://conjars.org/repo"
+    Opts.resolver.sonatypeReleases
   ),
 
   parallelExecution in Test := false,
@@ -144,7 +140,6 @@ lazy val tormenta = Project(
   publishLocal := { }
 ).aggregate(
   tormentaCore,
-  tormentaKestrel,
   tormentaKafka,
   tormentaTwitter,
   tormentaAvro
@@ -168,11 +163,7 @@ lazy val tormentaTwitter = module("twitter").settings(
 ).dependsOn(tormentaCore % "test->test;compile->compile")
 
 lazy val tormentaKafka = module("kafka").settings(
-  libraryDependencies += "storm" % "storm-kafka" % stormKafkaVersion
-).dependsOn(tormentaCore % "test->test;compile->compile")
-
-lazy val tormentaKestrel = module("kestrel").settings(
-  libraryDependencies += "storm" % "storm-kestrel" % stormKestrelVersion
+  libraryDependencies += "org.apache.storm" % "storm-kafka" % stormVersion
 ).dependsOn(tormentaCore % "test->test;compile->compile")
 
 lazy val tormentaAvro = module("avro").settings(

@@ -16,17 +16,18 @@
 
 package com.twitter.tormenta.scheme
 
+import java.nio.ByteBuffer
 import org.scalatest._
 import scala.collection.JavaConverters._
 
 class SchemeWithHandlerSpecification extends WordSpec with Matchers {
   "Scheme" should {
-    val f: Array[Byte] => List[String] = b => throw new IllegalArgumentException("decode failed")
+    val f: ByteBuffer => List[String] = b => throw new IllegalArgumentException("decode failed")
 
     def eqv[T, U](t: T, u: U)(implicit ev: U =:= T): Boolean = (t == u)
 
     def checkResult[T](scheme: Scheme[T], expectedResult: List[T]) {
-      val result = scheme.deserialize("test string".getBytes("UTF-8"))
+      val result = scheme.deserialize(ByteBuffer.wrap("test string".getBytes("UTF-8")))
       assert(result.asScala.isEmpty == false) //test fails, returns an empty list
       assert {
         eqv(result.asScala.toList.map(_.get(0).asInstanceOf[T]), expectedResult)
