@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory
  */
 
 object Scheme {
-  val identity: Scheme[ByteBuffer] = Scheme(Some(_))
+  val identity: Scheme[ByteBuffer] = Scheme(Iterator.single)
 
   def apply[T](decodeFn: ByteBuffer => TraversableOnce[T]) =
     new Scheme[T] {
