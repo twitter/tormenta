@@ -16,20 +16,22 @@
 
 package com.twitter.tormenta.scheme.avro
 
-import com.twitter.bijection.{ Bufferable, Injection }
+import com.twitter.bijection.Injection
 import scala.util.{ Failure, Success }
 import com.twitter.tormenta.scheme.Scheme
 import java.nio.ByteBuffer
 
-object BufferableScheme {
-  def apply[T](inj: Injection[T, Array[Byte]]): BufferableScheme[T] =
-    new BufferableScheme[T](Bufferable.viaInjection(Bufferable.byteArray, inj))
+object InjectionScheme {
+  def apply[T](inj: Injection[T, Array[Byte]]): InjectionScheme[T] =
+    new InjectionScheme[T](inj)
 }
 
-class BufferableScheme[T](bufferable: Bufferable[T]) extends Scheme[T] {
-  override def decode(bytes: ByteBuffer): TraversableOnce[T] = {
-    bufferable.get(bytes) match {
-      case Success((newBuffer, x)) => Seq(x)
+class InjectionScheme[T](inj: Injection[T, Array[Byte]]) extends Scheme[T] {
+  override def decode(buf: ByteBuffer): TraversableOnce[T] = {
+    val bytes = Array.ofDim[Byte](buf.remaining())
+    buf.get(bytes)
+    inj.invert(bytes) match {
+      case Success(x) => Seq(x)
       case Failure(x) => throw x
     }
   }

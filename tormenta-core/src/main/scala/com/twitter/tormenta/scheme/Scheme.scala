@@ -34,15 +34,16 @@ object Scheme {
 
   def apply[T](decodeFn: ByteBuffer => TraversableOnce[T]) =
     new Scheme[T] {
-      override def decode(bytes: ByteBuffer) = decodeFn(bytes)
+      override def decode(buf: ByteBuffer) = decodeFn(buf)
     }
 }
 
 trait Scheme[+T] extends MultiScheme with Serializable { self =>
   /**
    * This is the only method you're required to implement.
+   * There is no requirement where ByteBuffer's position should be after this method finishes.
    */
-  def decode(bytes: ByteBuffer): TraversableOnce[T]
+  def decode(buf: ByteBuffer): TraversableOnce[T]
 
   def handle(t: Throwable): TraversableOnce[T] = {
     // We assume this is rare enough that the perf hit of
@@ -55,7 +56,7 @@ trait Scheme[+T] extends MultiScheme with Serializable { self =>
   def withHandler[U >: T](fn: Throwable => TraversableOnce[U]): Scheme[U] =
     new Scheme[U] {
       override def handle(t: Throwable) = fn(t)
-      override def decode(bytes: ByteBuffer) = self.decode(bytes)
+      override def decode(buf: ByteBuffer) = self.decode(buf)
     }
 
   def filter(fn: T => Boolean): Scheme[T] =

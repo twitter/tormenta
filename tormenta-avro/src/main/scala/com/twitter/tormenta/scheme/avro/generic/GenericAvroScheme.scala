@@ -20,18 +20,18 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.avro.Schema
 import com.twitter.bijection.avro.GenericAvroCodecs
 import com.twitter.bijection.Injection.connect
-import com.twitter.tormenta.scheme.avro.BufferableScheme
+import com.twitter.tormenta.scheme.avro.InjectionScheme
 
 object GenericAvroScheme {
-  def apply[T <: GenericRecord](schema: Schema) = BufferableScheme(GenericAvroCodecs[T](schema))
+  def apply[T <: GenericRecord](schema: Schema) = InjectionScheme(GenericAvroCodecs[T](schema))
 }
 
 object BinaryAvroScheme {
-  def apply[T <: GenericRecord](schema: Schema) = BufferableScheme(GenericAvroCodecs.toBinary[T](schema))
+  def apply[T <: GenericRecord](schema: Schema) = InjectionScheme(GenericAvroCodecs.toBinary[T](schema))
 }
 
 object JsonAvroScheme {
   def apply[T <: GenericRecord](schema: Schema) =
-    BufferableScheme(GenericAvroCodecs.toJson[T](schema) andThen connect[String, Array[Byte]])
+    InjectionScheme(GenericAvroCodecs.toJson[T](schema) andThen connect[String, Array[Byte]])
 }
 

@@ -16,22 +16,25 @@
 
 package com.twitter.tormenta.scheme.avro.specific
 
+import scala.reflect.ClassTag
+
 import org.apache.avro.Schema
-import com.twitter.tormenta.scheme.avro.BufferableScheme
-import com.twitter.bijection.avro.SpecificAvroCodecs
-import com.twitter.bijection.Injection._
 import org.apache.avro.specific.SpecificRecordBase
 
+import com.twitter.tormenta.scheme.avro.InjectionScheme
+import com.twitter.bijection.avro.SpecificAvroCodecs
+import com.twitter.bijection.Injection._
+
 object SpecificAvroScheme {
-  def apply[T <: SpecificRecordBase: Manifest] = BufferableScheme(SpecificAvroCodecs[T])
+  def apply[T <: SpecificRecordBase: ClassTag] = InjectionScheme(SpecificAvroCodecs[T])
 }
 
 object BinaryAvroScheme {
-  def apply[T <: SpecificRecordBase: Manifest] = BufferableScheme(SpecificAvroCodecs.toBinary[T])
+  def apply[T <: SpecificRecordBase: ClassTag] = InjectionScheme(SpecificAvroCodecs.toBinary[T])
 }
 
 object JsonAvroScheme {
-  def apply[T <: SpecificRecordBase: Manifest](schema: Schema) =
-    BufferableScheme(SpecificAvroCodecs.toJson[T](schema) andThen connect[String, Array[Byte]])
+  def apply[T <: SpecificRecordBase: ClassTag](schema: Schema) =
+    InjectionScheme(SpecificAvroCodecs.toJson[T](schema) andThen connect[String, Array[Byte]])
 }
 
