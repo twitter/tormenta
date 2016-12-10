@@ -1,4 +1,9 @@
-## Tormenta [![Build Status](https://secure.travis-ci.org/twitter/tormenta.png)](http://travis-ci.org/twitter/tormenta)
+## Tormenta
+
+[![Build Status](https://secure.travis-ci.org/twitter/tormenta.png)](http://travis-ci.org/twitter/tormenta)
+[![Codecov branch](https://img.shields.io/codecov/c/github/twitter/tormenta/develop.svg?maxAge=3600)](https://codecov.io/github/twitter/tormenta)
+[![Latest version](https://index.scala-lang.org/twitter/tormenta/tormenta-core/latest.svg?color=orange)](https://index.scala-lang.org/twitter/tormenta/tormenta-core)
+[![Chat](https://badges.gitter.im/twitter/tormenta.svg)](https://gitter.im/twitter/tormenta?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Scala extensions for the [Storm](https://github.com/nathanmarz/storm) distributed computation system. Tormenta adds a type-safe wrapper over Storm's Kafka and Kestrel spouts. This type safety allows the user to push mapping and filtering transformations down to the level of the spout itself:
 
@@ -74,4 +79,4 @@ The suffix denotes the scala version.
 
 Copyright 2015 Twitter, Inc.
 
-Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
