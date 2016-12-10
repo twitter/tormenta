@@ -1,5 +1,7 @@
 ## Tormenta [![Build Status](https://secure.travis-ci.org/twitter/tormenta.png)](http://travis-ci.org/twitter/tormenta)
 
+[![Join the chat at https://gitter.im/twitter/tormenta](https://badges.gitter.im/twitter/tormenta.svg)](https://gitter.im/twitter/tormenta?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Scala extensions for the [Storm](https://github.com/nathanmarz/storm) distributed computation system. Tormenta adds a type-safe wrapper over Storm's Kafka and Kestrel spouts. This type safety allows the user to push mapping and filtering transformations down to the level of the spout itself:
 
 ```scala
