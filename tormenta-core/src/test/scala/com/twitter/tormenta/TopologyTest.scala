@@ -17,8 +17,8 @@
 package com.twitter.tormenta
 
 import org.apache.storm.topology.TopologyBuilder
-import org.apache.storm.testing.{CompleteTopologyParam, MockedSources, TestGlobalCount, TestJob}
-import org.apache.storm.{ILocalCluster, Testing}
+import org.apache.storm.testing.{ CompleteTopologyParam, MockedSources, TestGlobalCount, TestJob }
+import org.apache.storm.{ ILocalCluster, Testing }
 import com.twitter.tormenta.spout.Spout
 import org.apache.storm.tuple.Values
 import org.scalatest._
