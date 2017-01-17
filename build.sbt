@@ -120,9 +120,11 @@ lazy val formattingPreferences = {
 val unreleasedModules = Set[String]()
 
 def youngestForwardCompatible(subProj: String) =
-  Some(subProj)
-    .filterNot(unreleasedModules.contains(_))
-    .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.11.0" }
+  None
+// Uncomment after next release
+//  Some(subProj)
+//    .filterNot(unreleasedModules.contains(_))
+//    .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.11.0" }
 
 /**
   * Empty this each time we publish a new version (and bump the minor number)
