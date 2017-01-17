@@ -16,9 +16,8 @@ limitations under the License.
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
-import backtype.storm.task.TopologyContext
+import org.apache.storm.task.TopologyContext
 
 /**
  * Spout that performs a flatMap operation on its contained

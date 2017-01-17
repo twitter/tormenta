@@ -16,9 +16,9 @@
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.topology.IRichSpout
+import org.apache.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
-import backtype.storm.task.TopologyContext
+import org.apache.storm.task.TopologyContext
 
 trait SchemeSpout[+T] extends BaseSpout[T] { self =>
   /**

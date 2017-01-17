@@ -20,44 +20,18 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.avro.Schema
 import com.twitter.bijection.avro.GenericAvroCodecs
 import com.twitter.bijection.Injection.connect
-import com.twitter.tormenta.scheme.avro.AvroScheme
-import com.twitter.tormenta.scheme.Scheme
+import com.twitter.tormenta.scheme.avro.InjectionScheme
 
-/**
- * @author Mansur Ashraf
- * @since 9/14/13
- */
 object GenericAvroScheme {
-  def apply[T <: GenericRecord](schema: Schema) = new GenericAvroScheme[T](schema)
-}
-
-class GenericAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
-  def decode(bytes: Array[Byte]): TraversableOnce[T] = {
-    implicit val inj = GenericAvroCodecs[T](schema)
-    decodeRecord(bytes)
-  }
+  def apply[T <: GenericRecord](schema: Schema) = InjectionScheme(GenericAvroCodecs[T](schema))
 }
 
 object BinaryAvroScheme {
-  def apply[T <: GenericRecord](schema: Schema) = new BinaryAvroScheme[T](schema)
-}
-
-class BinaryAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
-  def decode(bytes: Array[Byte]): TraversableOnce[T] = {
-    implicit val inj = GenericAvroCodecs.toBinary[T](schema)
-    decodeRecord(bytes)
-  }
+  def apply[T <: GenericRecord](schema: Schema) = InjectionScheme(GenericAvroCodecs.toBinary[T](schema))
 }
 
 object JsonAvroScheme {
-  def apply[T <: GenericRecord](schema: Schema) = new JsonAvroScheme[T](schema)
-}
-
-class JsonAvroScheme[T <: GenericRecord](schema: Schema) extends Scheme[T] with AvroScheme[T] {
-  def decode(bytes: Array[Byte]): TraversableOnce[T] = {
-    implicit val avroInj = GenericAvroCodecs.toJson[T](schema)
-    implicit val inj = connect[T, String, Array[Byte]]
-    decodeRecord(bytes)
-  }
+  def apply[T <: GenericRecord](schema: Schema) =
+    InjectionScheme(GenericAvroCodecs.toJson[T](schema) andThen connect[String, Array[Byte]])
 }
 

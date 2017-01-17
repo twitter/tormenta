@@ -1,9 +1,9 @@
 package com.twitter.tormenta.spout
 
-import backtype.storm.spout.SpoutOutputCollector
-import backtype.storm.task.TopologyContext
-import backtype.storm.topology.IRichSpout
-import backtype.storm.topology.OutputFieldsDeclarer
+import org.apache.storm.spout.SpoutOutputCollector
+import org.apache.storm.task.TopologyContext
+import org.apache.storm.topology.IRichSpout
+import org.apache.storm.topology.OutputFieldsDeclarer
 import com.twitter.tormenta.Externalizer
 import java.io.Serializable
 import java.util.{ Map => JMap }

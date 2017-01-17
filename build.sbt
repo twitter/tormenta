@@ -5,13 +5,11 @@ import com.typesafe.sbt.SbtScalariform._
 
 val avroVersion = "1.7.5"
 val bijectionVersion = "0.9.4"
-val chillVersion = "0.7.3"
+val chillVersion = "0.8.3"
 val scalacheckVersion = "1.13.4"
 val scalaTestVersion = "3.0.1"
 val slf4jVersion = "1.6.6"
-val stormKafkaVersion = "0.9.0-wip6-scala292-multischeme"
-val stormKestrelVersion = "0.9.0-wip5-multischeme"
-val stormVersion = "0.9.0-wip15"
+val stormVersion = "1.0.2"
 val twitter4jVersion = "3.0.3"
 
 val extraSettings = mimaDefaultSettings ++ scalariformSettings
@@ -32,16 +30,14 @@ val sharedSettings = extraSettings ++ ciSettings ++ Seq(
   javacOptions in doc := Seq("-source", "1.6"),
   libraryDependencies ++= Seq(
     "org.slf4j" % "slf4j-api" % slf4jVersion,
-    "storm" % "storm" % stormVersion % "provided",
+    "org.apache.storm" % "storm-core" % stormVersion % "provided",
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
   ),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-Yresolve-term-conflict:package"),
   resolvers ++= Seq(
     Opts.resolver.sonatypeSnapshots,
-    Opts.resolver.sonatypeReleases,
-    "Clojars Repository" at "http://clojars.org/repo",
-    "Conjars Repository" at "http://conjars.org/repo"
+    Opts.resolver.sonatypeReleases
   ),
 
   parallelExecution in Test := false,
@@ -124,9 +120,11 @@ lazy val formattingPreferences = {
 val unreleasedModules = Set[String]()
 
 def youngestForwardCompatible(subProj: String) =
-  Some(subProj)
-    .filterNot(unreleasedModules.contains(_))
-    .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.11.0" }
+  None
+// Uncomment after next release
+//  Some(subProj)
+//    .filterNot(unreleasedModules.contains(_))
+//    .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.11.0" }
 
 /**
   * Empty this each time we publish a new version (and bump the minor number)
@@ -155,7 +153,6 @@ lazy val tormenta = Project(
   .settings(noPublishSettings)
   .aggregate(
   tormentaCore,
-  tormentaKestrel,
   tormentaKafka,
   tormentaTwitter,
   tormentaAvro
@@ -180,11 +177,7 @@ lazy val tormentaTwitter = module("twitter").settings(
 ).dependsOn(tormentaCore % "test->test;compile->compile")
 
 lazy val tormentaKafka = module("kafka").settings(
-  libraryDependencies += "storm" % "storm-kafka" % stormKafkaVersion
-).dependsOn(tormentaCore % "test->test;compile->compile")
-
-lazy val tormentaKestrel = module("kestrel").settings(
-  libraryDependencies += "storm" % "storm-kestrel" % stormKestrelVersion
+  libraryDependencies += "org.apache.storm" % "storm-kafka" % stormVersion
 ).dependsOn(tormentaCore % "test->test;compile->compile")
 
 lazy val tormentaAvro = module("avro").settings(

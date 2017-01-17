@@ -16,11 +16,9 @@
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.spout.SpoutOutputCollector
-import backtype.storm.task.TopologyContext
-import backtype.storm.topology.IRichSpout
+import org.apache.storm.task.TopologyContext
+import org.apache.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
-import java.util.{ Map => JMap }
 import org.scalatest._
 
 class CapturingSchemeSpout extends SchemeSpout[Int] {

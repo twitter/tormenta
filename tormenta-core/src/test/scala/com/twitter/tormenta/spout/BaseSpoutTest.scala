@@ -16,9 +16,6 @@
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.spout.SpoutOutputCollector
-import backtype.storm.task.TopologyContext
-import java.util.{ Map => JMap }
 import org.scalatest._
 
 class BaseSpoutTest extends WordSpec with Matchers {

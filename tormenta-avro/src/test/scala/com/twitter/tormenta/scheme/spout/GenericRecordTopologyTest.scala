@@ -16,13 +16,13 @@
 
 package com.twitter.tormenta.scheme.spout
 
-import backtype.storm.topology.TopologyBuilder
-import backtype.storm.testing.{ MockedSources, TestGlobalCount }
-import backtype.storm.LocalCluster
+import org.apache.storm.topology.TopologyBuilder
+import org.apache.storm.testing.{ MockedSources, TestGlobalCount }
+import org.apache.storm.LocalCluster
 import com.twitter.tormenta.spout.TraversableSpout
-import backtype.storm.testing.CompleteTopologyParam
-import backtype.storm.tuple.Values
-import backtype.storm.Testing
+import org.apache.storm.testing.CompleteTopologyParam
+import org.apache.storm.tuple.Values
+import org.apache.storm.Testing
 
 import org.scalatest._
 import scala.collection.JavaConverters._
