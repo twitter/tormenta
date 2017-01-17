@@ -10,6 +10,10 @@ matrix:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
+    - scala: 2.12.1
+      jdk: oraclejdk8
+      script: ./sbt ++$TRAVIS_SCALA_VERSION clean test
+
 cache:
   directories:
   - $HOME/.sbt/0.13/dependency
