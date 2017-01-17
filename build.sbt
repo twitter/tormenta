@@ -1,40 +1,37 @@
 import ReleaseTransformations._
 import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
-import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
 import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform._
-import tormenta._
 
 val avroVersion = "1.7.5"
-val bijectionVersion = "0.9.0"
+val bijectionVersion = "0.9.4"
 val chillVersion = "0.7.3"
-val scalaCheckVersion = "1.12.2"
-val scalaTestVersion = "2.2.4"
+val scalacheckVersion = "1.13.4"
+val scalaTestVersion = "3.0.1"
 val slf4jVersion = "1.6.6"
 val stormVersion = "1.0.2"
 val twitter4jVersion = "3.0.3"
 
-val extraSettings =
-  Project.defaultSettings ++ mimaDefaultSettings ++ scalariformSettings
+val extraSettings = mimaDefaultSettings ++ scalariformSettings
 
-def ciSettings: Seq[Project.Setting[_]] =
+def ciSettings: Seq[Def.Setting[_]] =
   if (sys.env.getOrElse("TRAVIS", "false").toBoolean) Seq(
     ivyLoggingLevel := UpdateLogging.Quiet,
     logLevel in Global := Level.Warn,
     logLevel in Compile := Level.Warn,
     logLevel in Test := Level.Info
-  ) else Seq.empty[Project.Setting[_]]
+  ) else Seq.empty[Def.Setting[_]]
 
 val sharedSettings = extraSettings ++ ciSettings ++ Seq(
   organization := "com.twitter",
-  scalaVersion := "2.10.5",
-  crossScalaVersions := Seq("2.10.5", "2.11.7"),
+  scalaVersion := "2.11.8",
+  crossScalaVersions := Seq("2.10.6", "2.11.8"),
   javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
   javacOptions in doc := Seq("-source", "1.6"),
   libraryDependencies ++= Seq(
     "org.slf4j" % "slf4j-api" % slf4jVersion,
     "org.apache.storm" % "storm-core" % stormVersion % "provided",
-    "org.scalacheck" %% "scalacheck" % scalaCheckVersion % "test",
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
   ),
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-Yresolve-term-conflict:package"),
@@ -47,12 +44,11 @@ val sharedSettings = extraSettings ++ ciSettings ++ Seq(
 
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-language:implicitConversions", "-language:higherKinds", "-language:existentials"),
 
-  scalacOptions <++= (scalaVersion) map { sv =>
-      if (sv startsWith "2.10")
-        Seq("-Xdivergence211")
-      else
-        Seq()
-  },
+  scalacOptions ++= (if (scalaVersion.value startsWith "2.10")
+      Seq("-Xdivergence211")
+    else
+      Seq()),
+
   // Publishing options:
   releaseCrossBuild := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
@@ -75,14 +71,12 @@ val sharedSettings = extraSettings ++ ciSettings ++ Seq(
     ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
     pushChanges),
 
-  publishTo <<= version { v =>
-    Some(
-      if (v.trim.toUpperCase.endsWith("SNAPSHOT"))
+  publishTo := Some(
+      if (version.value.trim.toUpperCase.endsWith("SNAPSHOT"))
         Opts.resolver.sonatypeSnapshots
       else
         Opts.resolver.sonatypeStaging
-    )
-  },
+    ),
 
   pomExtra := (
     <url>https://github.com/twitter/tormenta</url>
@@ -130,15 +124,32 @@ def youngestForwardCompatible(subProj: String) =
     .filterNot(unreleasedModules.contains(_))
     .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.11.0" }
 
+/**
+  * Empty this each time we publish a new version (and bump the minor number)
+  */
+val ignoredABIProblems = {
+  import com.typesafe.tools.mima.core._
+  import com.typesafe.tools.mima.core.ProblemFilters._
+  Seq(
+    exclude[ReversedMissingMethodProblem](
+      "com.twitter.tormenta.spout.SchemeSpout.openHook"
+    )
+  )
+}
+
+lazy val noPublishSettings = Seq(
+    publish := (),
+    publishLocal := (),
+    test := (),
+    publishArtifact := false
+  )
+
 lazy val tormenta = Project(
   id = "tormenta",
   base = file("."),
-  settings = sharedSettings ++ DocGen.publishSettings
-  ).settings(
-  test := { },
-  publish := { }, // skip publishing for this root project.
-  publishLocal := { }
-).aggregate(
+  settings = sharedSettings)
+  .settings(noPublishSettings)
+  .aggregate(
   tormentaCore,
   tormentaKafka,
   tormentaTwitter,
@@ -149,8 +160,9 @@ def module(name: String) = {
   val id = "tormenta-%s".format(name)
   Project(id = id, base = file(id), settings = sharedSettings ++ Seq(
     Keys.name := id,
-    previousArtifact := youngestForwardCompatible(name))
-  )
+    mimaPreviousArtifacts := youngestForwardCompatible(name).toSet,
+    mimaBinaryIssueFilters ++= ignoredABIProblems
+  ))
 }
 
 lazy val tormentaCore = module("core").settings(
