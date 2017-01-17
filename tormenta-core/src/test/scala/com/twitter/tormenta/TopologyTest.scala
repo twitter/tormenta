@@ -17,13 +17,10 @@
 package com.twitter.tormenta
 
 import org.apache.storm.topology.TopologyBuilder
-import org.apache.storm.testing.{ MockedSources, TestGlobalCount }
-import org.apache.storm.LocalCluster
+import org.apache.storm.testing.{CompleteTopologyParam, MockedSources, TestGlobalCount, TestJob}
+import org.apache.storm.{ILocalCluster, Testing}
 import com.twitter.tormenta.spout.Spout
-import org.apache.storm.testing.CompleteTopologyParam
 import org.apache.storm.tuple.Values
-import org.apache.storm.Testing
-import org.apache.storm.utils.Time
 import org.scalatest._
 import scala.collection.JavaConverters._
 
@@ -41,28 +38,20 @@ class TopologyTest extends WordSpec with Matchers with BeforeAndAfter {
   builder.setBolt("2", new TestGlobalCount()).globalGrouping("1")
   val topo = builder.createTopology
 
-  // The following throws a NPE because we need to have a
-  // MockedSources present:
-  //
-  // Testing.completeTopology(localCluster, topo)
-  //
-  // So use this instead:
   "Complete Topology" should {
-    Time.startSimulating()
-    val localCluster = new LocalCluster
-
     "properly complete" in {
-      val ret = Testing.completeTopology(localCluster, topo, completeTopologyParam)
-      val spoutTuples = Testing.readTuples(ret, "1")
-      assert(spoutTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
+      Testing.withSimulatedTimeLocalCluster(new TestJob {
+        override def run(cluster: ILocalCluster): Unit = {
+          val ret = Testing.completeTopology(cluster, topo, completeTopologyParam)
+          val spoutTuples = Testing.readTuples(ret, "1")
+          assert(spoutTuples.asScala.toList
+            .map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
 
-      val countTuples = Testing.readTuples(ret, "2")
-      assert(countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
-    }
-
-    after {
-      localCluster.shutdown()
-      Time.stopSimulating()
+          val countTuples = Testing.readTuples(ret, "2")
+          assert(countTuples.asScala.toList
+            .map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
+        }
+      })
     }
   }
 }
