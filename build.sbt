@@ -4,7 +4,7 @@ import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform._
 
 val avroVersion = "1.7.5"
-val bijectionVersion = "0.9.4"
+val bijectionVersion = "0.9.5"
 val chillVersion = "0.8.3"
 val scalacheckVersion = "1.13.4"
 val scalaTestVersion = "3.0.1"
@@ -25,7 +25,7 @@ def ciSettings: Seq[Def.Setting[_]] =
 val sharedSettings = extraSettings ++ ciSettings ++ Seq(
   organization := "com.twitter",
   scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.6", "2.11.8"),
+  crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.1"),
   javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
   javacOptions in doc := Seq("-source", "1.6"),
   libraryDependencies ++= Seq(
