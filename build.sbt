@@ -5,7 +5,7 @@ import com.typesafe.sbt.SbtScalariform._
 
 val avroVersion = "1.7.5"
 val bijectionVersion = "0.9.4"
-val chillVersion = "0.7.3"
+val chillVersion = "0.8.3"
 val scalacheckVersion = "1.13.4"
 val scalaTestVersion = "3.0.1"
 val slf4jVersion = "1.6.6"
