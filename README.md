@@ -5,7 +5,7 @@
 [![Latest version](https://index.scala-lang.org/twitter/tormenta/tormenta-core/latest.svg?color=orange)](https://index.scala-lang.org/twitter/tormenta/tormenta-core)
 [![Chat](https://badges.gitter.im/twitter/tormenta.svg)](https://gitter.im/twitter/tormenta?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Scala extensions for the [Storm](https://github.com/nathanmarz/storm) distributed computation system. Tormenta adds a type-safe wrapper over Storm's Kafka and Kestrel spouts. This type safety allows the user to push mapping and filtering transformations down to the level of the spout itself:
+Scala extensions for the [Storm](https://github.com/nathanmarz/storm) distributed computation system. Tormenta adds a type-safe wrapper over Storm's Kafka spout. This type safety allows the user to push mapping and filtering transformations down to the level of the spout itself:
 
 ```scala
 import com.twitter.tormenta.scheme._
@@ -21,7 +21,7 @@ val mappedScheme: Scheme[Int] = scheme.map(_.length)
 val filteredScheme: Scheme[Int] = mappedScheme.filter(_ > 5)
 
 // produces lengths for input strings > length of 5
-val spout: KestrelSpout[Int] = new KestrelSpout(filteredScheme, hostSeq, "spout")
+val spout: KafkaSpout[Int] = new KafkaSpout(filteredScheme, zkHost, brokerZkPath, topic, appID, zkRoot)
 ```
 
 To use a `Spout[T]` in a Storm topology, call the `getSpout` method:
@@ -55,16 +55,17 @@ A list of contributors to the project can be found here: [Contributors](https://
 
 ## Maven
 
-Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.11.1`.
+Tormenta modules are available on Maven Central. The current groupid and version for all modules is, respectively, `"com.twitter"` and  `0.12.0`.
 
 Current published artifacts are
 
+* `tormenta-core_2.12`
 * `tormenta-core_2.11`
 * `tormenta-core_2.10`
+* `tormenta-kafka_2.12`
 * `tormenta-kafka_2.11`
 * `tormenta-kafka_2.10`
-* `tormenta-kestrel_2.11`
-* `tormenta-kestrel_2.10`
+* `tormenta-twitter_2.12`
 * `tormenta-twitter_2.11`
 * `tormenta-twitter_2.10`
 
@@ -77,6 +78,6 @@ The suffix denotes the scala version.
 
 ## License
 
-Copyright 2015 Twitter, Inc.
+Copyright 2017 Twitter, Inc.
 
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
