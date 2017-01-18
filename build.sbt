@@ -120,11 +120,9 @@ lazy val formattingPreferences = {
 val unreleasedModules = Set[String]()
 
 def youngestForwardCompatible(subProj: String) =
-  None
-// Uncomment after next release
-//  Some(subProj)
-//    .filterNot(unreleasedModules.contains(_))
-//    .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.11.0" }
+  Some(subProj)
+    .filterNot(unreleasedModules.contains(_))
+    .map { s => "com.twitter" % ("tormenta-" + s + "_2.10") % "0.12.0" }
 
 /**
   * Empty this each time we publish a new version (and bump the minor number)
@@ -133,9 +131,6 @@ val ignoredABIProblems = {
   import com.typesafe.tools.mima.core._
   import com.typesafe.tools.mima.core.ProblemFilters._
   Seq(
-    exclude[ReversedMissingMethodProblem](
-      "com.twitter.tormenta.spout.SchemeSpout.openHook"
-    )
   )
 }
 
