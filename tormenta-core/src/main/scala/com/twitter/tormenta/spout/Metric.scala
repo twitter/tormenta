@@ -16,10 +16,8 @@
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.task.TopologyContext
-import backtype.storm.metric.api.IMetric
-
-import java.io.Serializable
+import org.apache.storm.task.TopologyContext
+import org.apache.storm.metric.api.IMetric
 
 /**
  * Abstraction for encapsulating metric options

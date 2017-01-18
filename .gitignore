@@ -1,6 +1,6 @@
 *.class
 *.log
-
+sonatype.sbt
 # sbt specific
 dist/*
 target/
@@ -11,3 +11,8 @@ project/plugins/project/
 
 # Scala-IDE specific
 .scala_dependencies
+
+# IDEA's project files
+/.idea/
+/.idea_modules/
+*.iml

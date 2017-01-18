@@ -16,13 +16,8 @@
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.testing.CompletableSpout
-import backtype.storm.topology.IRichSpout
-import backtype.storm.topology.OutputFieldsDeclarer
-import backtype.storm.tuple.Fields
-import backtype.storm.tuple.Values
-import clojure.lang.RT
-import java.util.{ List => JList, ArrayList }
+import org.apache.storm.tuple.Values
+import java.util.ArrayList
 import collection.JavaConverters._
 
 object TraversableSpout {

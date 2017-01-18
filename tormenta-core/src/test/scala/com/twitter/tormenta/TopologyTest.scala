@@ -16,13 +16,11 @@
 
 package com.twitter.tormenta
 
-import backtype.storm.topology.TopologyBuilder
-import backtype.storm.testing.{ MockedSources, TestGlobalCount, CompletableSpout }
-import backtype.storm.LocalCluster
+import org.apache.storm.topology.TopologyBuilder
+import org.apache.storm.testing.{ CompleteTopologyParam, MockedSources, TestGlobalCount, TestJob }
+import org.apache.storm.{ ILocalCluster, Testing }
 import com.twitter.tormenta.spout.Spout
-import backtype.storm.testing.CompleteTopologyParam
-import backtype.storm.tuple.Values
-import backtype.storm.Testing
+import org.apache.storm.tuple.Values
 import org.scalatest._
 import scala.collection.JavaConverters._
 
@@ -30,7 +28,6 @@ class TopologyTest extends WordSpec with Matchers with BeforeAndAfter {
   val spout: Spout[Int] = Spout.fromTraversable(List(1, 2, 3, 4, 5))
 
   val builder = new TopologyBuilder
-  val localCluster = new LocalCluster
   val completeTopologyParam = {
     val ret = new CompleteTopologyParam()
     ret.setMockedSources(new MockedSources)
@@ -41,26 +38,20 @@ class TopologyTest extends WordSpec with Matchers with BeforeAndAfter {
   builder.setBolt("2", new TestGlobalCount()).globalGrouping("1")
   val topo = builder.createTopology
 
-  // The following throws a NPE because we need to have a
-  // MockedSources present:
-  //
-  // Testing.completeTopology(localCluster, topo)
-  //
-  // So use this instead:
   "Complete Topology" should {
-    val localCluster = new LocalCluster
-
     "properly complete" in {
-      val ret = Testing.completeTopology(localCluster, topo, completeTopologyParam)
-      val spoutTuples = Testing.readTuples(ret, "1")
-      assert(spoutTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
+      Testing.withSimulatedTimeLocalCluster(new TestJob {
+        override def run(cluster: ILocalCluster): Unit = {
+          val ret = Testing.completeTopology(cluster, topo, completeTopologyParam)
+          val spoutTuples = Testing.readTuples(ret, "1")
+          assert(spoutTuples.asScala.toList
+            .map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
 
-      val countTuples = Testing.readTuples(ret, "2")
-      assert(countTuples.asScala.toList.map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
-    }
-    after {
-      Thread.sleep(1500) // Dealing with race condition until storm bugfix.
-      localCluster.shutdown()
+          val countTuples = Testing.readTuples(ret, "2")
+          assert(countTuples.asScala.toList
+            .map(_.asInstanceOf[Values].get(0)) == List(1, 2, 3, 4, 5))
+        }
+      })
     }
   }
 }

@@ -16,11 +16,12 @@ limitations under the License.
 
 package com.twitter.tormenta.scheme
 
-import backtype.storm.tuple.{ Fields, Values }
-import backtype.storm.spout.MultiScheme
+import org.apache.storm.tuple.{ Fields, Values }
+import org.apache.storm.spout.MultiScheme
 import java.util.{ List => JList }
 import scala.collection.JavaConverters._
 import java.io.Serializable
+import java.nio.ByteBuffer
 import org.slf4j.LoggerFactory
 
 /**
@@ -29,19 +30,20 @@ import org.slf4j.LoggerFactory
  */
 
 object Scheme {
-  val identity: Scheme[Array[Byte]] = Scheme(Some(_))
+  val identity: Scheme[ByteBuffer] = Scheme(Iterator.single)
 
-  def apply[T](decodeFn: Array[Byte] => TraversableOnce[T]) =
+  def apply[T](decodeFn: ByteBuffer => TraversableOnce[T]) =
     new Scheme[T] {
-      override def decode(bytes: Array[Byte]) = decodeFn(bytes)
+      override def decode(buf: ByteBuffer) = decodeFn(buf)
     }
 }
 
 trait Scheme[+T] extends MultiScheme with Serializable { self =>
   /**
    * This is the only method you're required to implement.
+   * There is no requirement where ByteBuffer's position should be after this method finishes.
    */
-  def decode(bytes: Array[Byte]): TraversableOnce[T]
+  def decode(buf: ByteBuffer): TraversableOnce[T]
 
   def handle(t: Throwable): TraversableOnce[T] = {
     // We assume this is rare enough that the perf hit of
@@ -54,17 +56,20 @@ trait Scheme[+T] extends MultiScheme with Serializable { self =>
   def withHandler[U >: T](fn: Throwable => TraversableOnce[U]): Scheme[U] =
     new Scheme[U] {
       override def handle(t: Throwable) = fn(t)
-      override def decode(bytes: Array[Byte]) = self.decode(bytes)
+      override def decode(buf: ByteBuffer) = self.decode(buf)
     }
 
   def filter(fn: T => Boolean): Scheme[T] =
     Scheme(self.decode(_).filter(fn))
+      .withHandler(self.handle(_).filter(fn))
 
   def map[R](fn: T => R): Scheme[R] =
     Scheme(self.decode(_).map(fn))
+      .withHandler(self.handle(_).map(fn))
 
   def flatMap[R](fn: T => TraversableOnce[R]): Scheme[R] =
     Scheme(self.decode(_).flatMap(fn))
+      .withHandler(self.handle(_).flatMap(fn))
 
   private def cast(t: Any): JList[AnyRef] = new Values(t.asInstanceOf[AnyRef])
   private def toJava(items: TraversableOnce[Any]) =
@@ -73,7 +78,7 @@ trait Scheme[+T] extends MultiScheme with Serializable { self =>
     else
       null
 
-  override def deserialize(bytes: Array[Byte]) =
+  override def deserialize(bytes: ByteBuffer) =
     try {
       toJava(decode(bytes))
     } catch {

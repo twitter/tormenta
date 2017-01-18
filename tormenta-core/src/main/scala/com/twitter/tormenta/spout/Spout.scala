@@ -16,10 +16,9 @@
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.task.TopologyContext
-import backtype.storm.topology.IRichSpout
-
 import java.io.Serializable
+import org.apache.storm.task.TopologyContext
+import org.apache.storm.topology.IRichSpout
 
 /**
  * Base trait for Spout implementations.

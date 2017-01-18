@@ -16,19 +16,40 @@
 
 package com.twitter.tormenta.scheme
 
+import java.nio.ByteBuffer
 import org.scalatest._
 import scala.collection.JavaConverters._
 
-object SchemeWithHandlerSpecification extends WordSpec with Matchers {
-  "Scheme should handle failure" should {
-    "test failure" in {
-      val f: Array[Byte] => List[String] = b => throw new IllegalArgumentException("decode failed")
+class SchemeWithHandlerSpecification extends WordSpec with Matchers {
+  "Scheme" should {
+    val f: ByteBuffer => List[String] = b => throw new IllegalArgumentException("decode failed")
 
-      val schemeWithErrorHandler = Scheme(f).withHandler(t => List(t.getMessage))
-      val result = schemeWithErrorHandler.deserialize("test string".getBytes("UTF-8"))
+    def eqv[T, U](t: T, u: U)(implicit ev: U =:= T): Boolean = (t == u)
 
+    def checkResult[T](scheme: Scheme[T], expectedResult: List[T]) {
+      val result = scheme.deserialize(ByteBuffer.wrap("test string".getBytes("UTF-8")))
       assert(result.asScala.isEmpty == false) //test fails, returns an empty list
-      assert(result.asScala.head.get(0) == "decode failed")
+      assert {
+        eqv(result.asScala.toList.map(_.get(0).asInstanceOf[T]), expectedResult)
+      }
+    }
+
+    val schemeWithErrorHandler = Scheme(f).withHandler(t => List(t.getMessage))
+
+    "handle failure" in checkResult(schemeWithErrorHandler, List("decode failed"))
+
+    "map failure" in checkResult(schemeWithErrorHandler.map(_.length), List(13))
+
+    "flatMap failure" in {
+      val scheme = schemeWithErrorHandler.flatMap(s => List(s, s))
+      checkResult(scheme, List("decode failed", "decode failed"))
+    }
+
+    "filter failure" in {
+      val scheme = schemeWithErrorHandler
+        .flatMap(s => List(s, "one"))
+        .filter(_ == "one")
+      checkResult(scheme, List("one"))
     }
   }
 }

@@ -16,11 +16,11 @@
 
 package com.twitter.tormenta.spout
 
-import backtype.storm.topology.IRichSpout
+import org.apache.storm.topology.IRichSpout
 import com.twitter.tormenta.scheme.Scheme
-import backtype.storm.task.TopologyContext
+import org.apache.storm.task.TopologyContext
 
-trait SchemeSpout[+T] extends BaseSpout[T] {
+trait SchemeSpout[+T] extends BaseSpout[T] { self =>
   /**
    * This is the only required override.
    */
@@ -32,4 +32,10 @@ trait SchemeSpout[+T] extends BaseSpout[T] {
 
   override def flatMap[U](fn: T => TraversableOnce[U]): BaseSpout[U] =
     new FlatMappedSchemeSpout(this)(fn)
+
+  override def openHook(f: => TopologyContext => Unit) =
+    new SchemeSpout[T] {
+      def getSpout[R](transformer: Scheme[T] => Scheme[R], fn: => TopologyContext => Unit) = self.getSpout(transformer, fn)
+      override def callOnOpen: (TopologyContext) => Unit = { c => f(c); self.callOnOpen(c) }
+    }
 }

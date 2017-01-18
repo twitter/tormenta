@@ -1,5 +1,17 @@
 # tormenta #
 
+### Version 0.12.0 ###
+
+* Preserve openHook callbacks on SchemeSpouts: https://github.com/twitter/tormenta/pull/69
+* Upgrade to Storm API 1.0.2, as part of this change kestrel support was removed from tormenta: https://github.com/twitter/tormenta/pull/71
+* Update the build: https://github.com/twitter/tormenta/pull/73
+* Support Scala 2.12: https://github.com/twitter/tormenta/pull/75
+
+### Version 0.11.1 ###
+
+* Update the build: https://github.com/twitter/tormenta/pull/67
+* handlers now survive map, filter, flatMap: https://github.com/twitter/tormenta/pull/66
+
 ### Version 0.10.0 ###
 * Bumps to upstream versions
 
