@@ -22,7 +22,6 @@ import org.apache.storm.topology.base.BaseRichSpout
 import org.apache.storm.topology.IRichSpout
 import org.apache.storm.topology.OutputFieldsDeclarer
 import org.apache.storm.tuple.{ Fields, Values }
-import org.apache.storm.utils.Time
 import java.util.{ Map => JMap }
 
 trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
@@ -55,7 +54,7 @@ trait BaseSpout[+T] extends BaseRichSpout with Spout[T] { self =>
    * Override this to change the default spout behavior if poll
    * returns an empty list.
    */
-  def onEmpty: Unit = Time.sleep(50)
+  def onEmpty: Unit = Thread.sleep(50)
 
   override def getSpout: IRichSpout = this
 
